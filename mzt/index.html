@@ -1,0 +1,3060 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>大麦子 · XTBT × mzt</title>
+<style>
+:root{
+  --xtbt:#a78bfa; --lzy:#4fc3f7; --ink:#e9e6f5; --dim:#a49dbd;
+  --panel:rgba(17,14,28,.82); --edge:rgba(167,139,250,.35);
+  --ui-font:"Microsoft YaHei UI","Microsoft YaHei","PingFang SC","Hiragino Sans GB","Noto Sans SC",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#05050a;color:var(--ink);font-family:var(--ui-font);overflow:hidden;
+  -webkit-user-select:none;user-select:none;}
+#app{position:fixed;inset:0}
+#stage{position:absolute;inset:0;overflow:hidden;cursor:pointer}
+
+/* ---------- 背景 ---------- */
+.bg{position:absolute;inset:0;opacity:0;transition:opacity .42s ease;background-color:#0a0a12;background-repeat:no-repeat;background-size:cover}
+.bg.on{opacity:1}
+
+/* 走廊黄昏 */
+.s-corridor{background-image:
+  repeating-linear-gradient(90deg,rgba(255,208,150,.20) 0 7%,rgba(0,0,0,0) 7% 19%),
+  linear-gradient(180deg,rgba(0,0,0,0) 0 74%,rgba(0,0,0,.45) 74% 100%),
+  linear-gradient(180deg,#31243f 0%,#5b3a55 30%,#a0605c 52%,#e0a267 74%,#3b2b31 74%,#181119 100%);}
+/* 本校机房·白天（队里的机房：三十台机器，桌面全是显示器） */
+.s-machine_room{background-image:
+  repeating-linear-gradient(90deg,rgba(150,205,255,.17) 0 4.2%,rgba(0,0,0,0) 4.2% 5.4%),
+  repeating-linear-gradient(0deg,rgba(150,205,255,.10) 0 4%,rgba(0,0,0,0) 4% 4.8%),
+  radial-gradient(120% 60% at 92% 18%,rgba(255,238,190,.42),rgba(0,0,0,0) 60%),
+  linear-gradient(180deg,#26344c 0%,#38485f 42%,#77879a 63%,#3a4457 63%,#1c2431 100%);}
+/* 本校机房·夜晚 */
+.s-machine_room_night{background-image:
+  repeating-linear-gradient(90deg,rgba(130,200,255,.28) 0 4.2%,rgba(0,0,0,0) 4.2% 5.4%),
+  repeating-linear-gradient(0deg,rgba(130,200,255,.14) 0 4%,rgba(0,0,0,0) 4% 4.8%),
+  radial-gradient(60% 40% at 20% 55%,rgba(110,160,255,.22),rgba(0,0,0,0) 70%),
+  radial-gradient(60% 40% at 78% 48%,rgba(150,120,255,.20),rgba(0,0,0,0) 70%),
+  linear-gradient(180deg,#101725 0%,#182238 42%,#232f47 63%,#131a28 63%,#080b12 100%);}
+/* 集训宿舍·四人间·白天（上铺下桌，没有蚊帐） */
+.s-dorm{background-image:
+  repeating-linear-gradient(0deg,rgba(255,236,200,.10) 0 12%,rgba(0,0,0,0) 12% 24%),
+  radial-gradient(90% 60% at 84% 20%,rgba(255,240,200,.34),rgba(0,0,0,0) 62%),
+  linear-gradient(180deg,#39445c 0%,#3d4a63 34%,#5e6b84 55%,#7d7466 62%,#3a3630 100%);}
+/* 集训宿舍·熄灯之后（被窝里的手电） */
+.s-dorm_night{background-image:
+  radial-gradient(34% 26% at 26% 50%,rgba(160,200,255,.22),rgba(0,0,0,0) 72%),
+  radial-gradient(30% 24% at 72% 44%,rgba(120,150,255,.16),rgba(0,0,0,0) 74%),
+  linear-gradient(180deg,#0d111c 0%,#141a28 36%,#1b2130 58%,#241f1a 64%,#0a0a0e 100%);}
+/* 宿舍走廊 / 水房 · 夜 */
+.s-hall{background-image:
+  radial-gradient(30% 40% at 50% 16%,rgba(255,225,170,.30),rgba(0,0,0,0) 72%),
+  repeating-linear-gradient(90deg,rgba(255,225,170,.07) 0 8%,rgba(0,0,0,0) 8% 26%),
+  linear-gradient(180deg,#1a1f2c 0%,#2a3140 42%,#3a4152 60%,#22262f 60%,#12141a 100%);}
+/* 高中部空教室·初二暑假的临时机房（没有台式机，桌上全是笔记本） */
+.s-classroom{background-image:
+  linear-gradient(180deg,rgba(255,255,255,.06) 0 1.2%,rgba(0,0,0,0) 1.2%),
+  repeating-linear-gradient(90deg,rgba(255,238,190,.20) 0 5.2%,rgba(0,0,0,0) 5.2% 16%),
+  repeating-linear-gradient(0deg,rgba(120,200,255,.20) 0 3.2%,rgba(0,0,0,0) 3.2% 7.4%),
+  linear-gradient(180deg,rgba(0,0,0,0) 0 41%,rgba(0,0,0,.32) 41% 43.5%,rgba(0,0,0,0) 43.5% 46%,rgba(0,0,0,.22) 46% 47.5%,rgba(0,0,0,0) 47.5%),
+  linear-gradient(180deg,#4e6360 0%,#3f5254 26%,#8e94a2 46%,#847a5f 47%,#5c5342 62%,#221d1a 100%);}
+/* 同一间空教室·夜晚（笔记本屏幕亮着，空调还是 26 度） */
+.s-classroom_night{background-image:
+  linear-gradient(180deg,rgba(0,0,0,.30) 0 1.2%,rgba(0,0,0,0) 1.2%),
+  repeating-linear-gradient(90deg,rgba(150,200,255,.09) 0 5.2%,rgba(0,0,0,0) 5.2% 16%),
+  repeating-linear-gradient(0deg,rgba(130,200,255,.30) 0 3.2%,rgba(0,0,0,0) 3.2% 7.4%),
+  radial-gradient(60% 40% at 30% 44%,rgba(110,160,255,.16),rgba(0,0,0,0) 70%),
+  radial-gradient(50% 36% at 76% 46%,rgba(150,120,255,.14),rgba(0,0,0,0) 72%),
+  linear-gradient(180deg,rgba(0,0,0,0) 0 41%,rgba(0,0,0,.34) 41% 43.5%,rgba(0,0,0,0) 43.5% 46%,rgba(0,0,0,.26) 46% 47.5%,rgba(0,0,0,0) 47.5%),
+  linear-gradient(180deg,#1a2230 0%,#16202c 26%,#2b3444 46%,#2a2620 47%,#181513 62%,#08090c 100%);}
+/* 停电 */
+.s-blackout{background-image:
+  radial-gradient(50% 40% at 86% 42%,rgba(255,170,80,.30),rgba(0,0,0,0) 70%),
+  repeating-linear-gradient(90deg,rgba(255,170,90,.05) 0 4.2%,rgba(0,0,0,0) 4.2% 5.4%),
+  linear-gradient(180deg,#05060a 0%,#0b0e16 55%,#121722 63%,#05070b 100%);}
+/* 天台·夏夜 */
+.s-roof{background-image:
+  radial-gradient(140% 70% at 50% 96%,rgba(255,150,80,.30),rgba(0,0,0,0) 55%),
+  radial-gradient(60% 30% at 78% 82%,rgba(255,120,90,.16),rgba(0,0,0,0) 70%),
+  linear-gradient(180deg,#070a1c 0%,#101a3c 42%,#26335c 68%,#1a1a2c 68%,#0a0a12 100%);}
+/* 天台·雪夜 */
+.s-roof_snow{background-image:
+  radial-gradient(120% 60% at 50% 100%,rgba(150,190,255,.22),rgba(0,0,0,0) 60%),
+  linear-gradient(180deg,#05070f 0%,#0d1430 45%,#1d2749 70%,#141a2c 70%,#080a11 100%);}
+/* 赛场 */
+.s-contest{background-image:
+  radial-gradient(circle at 12% 62%,rgba(255,90,120,.55) 0 2.6%,rgba(0,0,0,0) 3.4%),
+  radial-gradient(circle at 27% 58%,rgba(255,210,90,.50) 0 2.4%,rgba(0,0,0,0) 3.2%),
+  radial-gradient(circle at 43% 64%,rgba(120,230,160,.45) 0 2.4%,rgba(0,0,0,0) 3.2%),
+  radial-gradient(circle at 68% 60%,rgba(140,170,255,.45) 0 2.4%,rgba(0,0,0,0) 3.2%),
+  radial-gradient(circle at 84% 66%,rgba(255,120,220,.40) 0 2.4%,rgba(0,0,0,0) 3.2%),
+  radial-gradient(120% 50% at 50% 0%,rgba(255,255,255,.16),rgba(0,0,0,0) 60%),
+  linear-gradient(180deg,#1a1a24 0%,#2a2a38 38%,#3a3a4c 60%,#22222e 60%,#111118 100%);}
+/* 街道夜 */
+.s-street{background-image:
+  radial-gradient(30% 55% at 16% 60%,rgba(255,196,120,.45),rgba(0,0,0,0) 70%),
+  radial-gradient(30% 55% at 82% 58%,rgba(255,196,120,.38),rgba(0,0,0,0) 70%),
+  linear-gradient(180deg,#070912 0%,#111a2e 45%,#2a3247 64%,#1b2030 64%,#0a0c14 100%);}
+
+#fx{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+#fx span{position:absolute;border-radius:50%}
+.fx-star{background:#fff;animation:tw 3.4s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15;transform:scale(.8)}50%{opacity:.95;transform:scale(1.15)}}
+.fx-snow{background:#fff;animation:fall linear infinite}
+@keyframes fall{0%{transform:translate3d(0,-12vh,0)}100%{transform:translate3d(28px,112vh,0)}}
+#vignette{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 45%,rgba(0,0,0,0) 40%,rgba(0,0,0,.55) 100%)}
+
+/* ---------- 立绘 ---------- */
+#sprites{position:absolute;inset:0;pointer-events:none;transition:transform .4s cubic-bezier(.22,.9,.28,1)}
+#sprites.chatting{transform:translateX(-5%) scale(.95);transform-origin:50% 100%}
+.sprite{position:absolute;bottom:-1.5%;height:82%;display:flex;align-items:flex-end;
+  opacity:0;transition:opacity .38s ease,transform .45s cubic-bezier(.22,.9,.28,1),left .45s cubic-bezier(.22,.9,.28,1),right .45s cubic-bezier(.22,.9,.28,1);
+  filter:drop-shadow(0 14px 34px rgba(0,0,0,.6))}
+.sprite.on{opacity:1}
+.sprite svg{height:100%;width:auto;display:block}
+.sprite[data-slot="left"]{left:3%}
+.sprite[data-slot="mid"]{left:50%;transform:translateX(-50%)}
+.sprite[data-slot="right"]{right:3%}
+.sprite.dim svg{filter:brightness(.6) saturate(.72) blur(.4px)}
+.sprite.solo{left:50%;right:auto;transform:translateX(-50%) scale(1.06)}
+#sprites.chatting .sprite.on{opacity:.45}
+.sprite[data-who="mzt"]{height:92%}   /* 他比 XTBT 高一头 */
+
+/* ---------- QQ 聊天窗 ---------- */
+#chat{position:absolute;right:2vw;top:11%;width:min(330px,34vw);max-height:66vh;display:flex;flex-direction:column;
+  background:linear-gradient(180deg,rgba(20,18,34,.95),rgba(11,10,20,.97));
+  border:1px solid rgba(120,180,255,.3);border-radius:14px;overflow:hidden;
+  box-shadow:0 18px 46px rgba(0,0,0,.62),0 0 0 1px rgba(255,255,255,.04) inset;
+  opacity:0;transform:translateY(12px) scale(.98);transition:.32s cubic-bezier(.22,.9,.28,1);pointer-events:none}
+#chat.on{opacity:1;transform:none}
+#chatHead{display:flex;align-items:center;gap:8px;padding:9px 12px;background:rgba(255,255,255,.055);
+  border-bottom:1px solid rgba(255,255,255,.08);font-size:12.8px;letter-spacing:.04em}
+#chatHead .dot{width:7px;height:7px;border-radius:50%;background:#5ee08a;box-shadow:0 0 9px #5ee08a;flex:0 0 7px}
+#chatHead .who{color:#dfe8ff}
+#chatBody{padding:11px 12px 6px;overflow:auto;display:flex;flex-direction:column;gap:9px;flex:1;
+  background:radial-gradient(120% 70% at 50% 0%,rgba(80,120,255,.07),transparent 62%)}
+#chatFoot{padding:5px 12px 9px;text-align:right;font-size:11.5px;color:#8d86a8;animation:bob 1.5s ease-in-out infinite}
+.qmsg{display:flex;gap:7px;align-items:flex-end;max-width:100%}
+.qmsg .av{width:22px;height:22px;border-radius:50%;flex:0 0 22px;display:grid;place-items:center;
+  font-size:11px;color:#0b0b14;font-weight:800;overflow:hidden}
+.qmsg .av svg{width:100%;height:100%;display:block}
+.av-pixel{background-color:#eef8ee;
+  background-image:
+    linear-gradient(45deg,#7cc47c 25%,transparent 25%,transparent 75%,#7cc47c 75%),
+    linear-gradient(45deg,#7cc47c 25%,transparent 25%,transparent 75%,#7cc47c 75%);
+  background-size:8px 8px;background-position:0 0,4px 4px}
+.qmsg .col{display:flex;flex-direction:column;gap:3px;max-width:100%}
+.qname{font-size:10.5px;color:#9a93b8;padding-left:3px;letter-spacing:.04em}
+.qmsg.right .col{align-items:flex-end}
+.qmsg .bub{padding:7px 11px;border-radius:12px;font-size:13.5px;line-height:1.7;max-width:225px;
+  word-break:break-word;white-space:pre-wrap}
+.qmsg.left .bub{background:rgba(255,255,255,.10);border-top-left-radius:4px}
+.qmsg.right{flex-direction:row-reverse}
+.qmsg.right .bub{background:linear-gradient(120deg,#5b7cff,#7b5bff);border-top-right-radius:4px;color:#fff}
+.qmsg.sys{justify-content:center}
+.qmsg.sys .bub{background:none;color:#8d86a8;font-size:11.5px;padding:1px 0}
+.qtip{display:flex;gap:4px;align-items:center;padding:9px 12px;background:rgba(255,255,255,.08);
+  border-radius:12px;border-top-left-radius:4px}
+.qtip i{width:5px;height:5px;border-radius:50%;background:#b9b2d4;animation:qt 1.1s infinite}
+.qtip i:nth-child(2){animation-delay:.15s}
+.qtip i:nth-child(3){animation-delay:.3s}
+@keyframes qt{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+/* ---------- 章节卡 ---------- */
+#chap{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;opacity:0;transition:opacity .5s ease;pointer-events:none;
+  background:radial-gradient(80% 60% at 50% 50%,rgba(8,6,16,.72),rgba(8,6,16,.2))}
+#chap.on{opacity:1}
+#chapNum{font-size:clamp(13px,1.5vw,17px);letter-spacing:.5em;color:var(--dim)}
+#chapTitle{font-size:clamp(28px,4.4vw,54px);font-weight:700;letter-spacing:.12em;
+  background:linear-gradient(100deg,#fff,#c9b8ff 45%,#8fd8ff);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 60px rgba(150,130,255,.45)}
+
+/* ---------- HUD ---------- */
+#hud{position:absolute;top:0;left:0;right:0;display:flex;align-items:center;gap:12px;padding:10px 14px;
+  background:linear-gradient(180deg,rgba(5,5,12,.72),rgba(5,5,12,0));font-size:12.5px}
+#chapterTag{color:var(--dim);letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:30vw}
+#affBox{display:flex;align-items:center;gap:6px;margin-left:auto;color:#ff9fc0}
+#affBar{width:76px;height:6px;border-radius:99px;background:rgba(255,255,255,.16);overflow:hidden}
+#affBar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#ff8fb0,#ff5f8d);transition:width .45s ease}
+#btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+#btns button,.btn{font-family:inherit;font-size:12.5px;color:var(--ink);background:rgba(28,22,44,.72);
+  border:1px solid rgba(255,255,255,.14);border-radius:8px;padding:5px 10px;cursor:pointer;transition:.18s}
+#btns button:hover,.btn:hover{background:rgba(60,48,96,.9);border-color:var(--edge)}
+#btns button.active{background:rgba(110,80,190,.85);border-color:#c9b8ff;color:#fff}
+
+/* ---------- 对话框 ---------- */
+#dlg{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);width:min(1080px,94vw);
+  background:linear-gradient(180deg,rgba(20,16,34,.86),rgba(12,10,22,.92));
+  border:1px solid rgba(167,139,250,.28);border-radius:16px;padding:20px 26px 26px;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:0 18px 50px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04) inset;
+  transition:opacity .3s ease,transform .3s ease}
+#dlg.hidden{opacity:0;transform:translateX(-50%) translateY(14px);pointer-events:none}
+#nameRow{display:flex;align-items:baseline;gap:10px;margin-bottom:8px;min-height:22px}
+#name{font-size:17px;font-weight:700;letter-spacing:.06em;color:var(--lzy)}
+#tag{font-size:11.5px;color:var(--dim);letter-spacing:.14em}
+#text{font-size:clamp(15px,1.55vw,19.5px);line-height:1.95;min-height:5.8em;white-space:pre-wrap;
+  letter-spacing:.02em;text-shadow:0 2px 10px rgba(0,0,0,.6)}
+#dlg.narr #text{color:#d7d3e8}
+#dlg.narr #name{display:none}
+#dlg.inner{background:linear-gradient(180deg,rgba(24,20,46,.88),rgba(14,12,30,.94));
+  border-color:rgba(120,180,255,.3)}
+#dlg.inner #name{color:#8fd0ff;font-style:italic}
+#dlg.inner #text{font-style:italic;color:#cfe4ff}
+#cont{position:absolute;right:18px;bottom:8px;font-size:13px;color:var(--dim);animation:bob 1.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(4px);opacity:1}}
+
+/* ---------- 选项 ---------- */
+#choices{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;gap:12px;
+  width:min(760px,86vw);z-index:6}
+#choices.hidden{display:none}
+.chq{text-align:center;color:#e5dfff;font-size:14.5px;letter-spacing:.1em;margin-bottom:4px;
+  text-shadow:0 2px 12px #000}
+.chbtn{position:relative;font-family:inherit;font-size:clamp(14px,1.6vw,17px);color:#f2eeff;text-align:left;
+  background:linear-gradient(100deg,rgba(38,28,66,.92),rgba(22,18,42,.92));
+  border:1px solid rgba(167,139,250,.45);border-radius:13px;padding:15px 20px 15px 46px;cursor:pointer;
+  transition:.2s;box-shadow:0 10px 26px rgba(0,0,0,.45)}
+.chbtn::before{content:"♥";position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#ff9fc0;opacity:.5;transition:.2s}
+.chbtn:hover{background:linear-gradient(100deg,rgba(76,56,132,.96),rgba(40,32,72,.96));transform:translateX(6px);
+  border-color:#d6c6ff;box-shadow:0 12px 34px rgba(120,90,220,.35)}
+.chbtn:hover::before{opacity:1;transform:translateY(-50%) scale(1.25)}
+
+/* ---------- 洛谷个人主页卡 / 榜单 ---------- */
+#card{position:absolute;left:50%;top:8%;transform:translate(-50%,0) scale(.97);width:min(440px,90vw);
+  background:linear-gradient(180deg,rgba(18,16,30,.97),rgba(10,10,18,.98));
+  border:1px solid rgba(150,170,255,.3);border-radius:14px;overflow:hidden;
+  box-shadow:0 18px 46px rgba(0,0,0,.66);opacity:0;pointer-events:none;
+  transition:.3s cubic-bezier(.22,.9,.28,1);z-index:5}
+#card.on{opacity:1;transform:translate(-50%,0) scale(1)}
+#cardHead{display:flex;justify-content:space-between;gap:10px;padding:8px 12px;font-size:12.5px;
+  color:#cfd7ff;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08)}
+#cardBody{padding:12px 14px;font-size:13.5px;line-height:1.85;color:#ddd8f0}
+.lgTop{display:flex;gap:12px;align-items:center;margin-bottom:10px}
+.lgAv{width:58px;height:58px;border-radius:12px;flex:0 0 58px;overflow:hidden;background:#eef0f6;
+  border:1px solid rgba(255,255,255,.18)}
+.lgAv svg{width:100%;height:100%;display:block}
+.lgName{font-size:19px;font-weight:800;color:#f2efff;letter-spacing:.02em}
+.lgBadge{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:6px;margin-left:7px;vertical-align:2px}
+.lgGold{background:linear-gradient(100deg,#f7d774,#c9962c);color:#3a2a05;font-weight:800}
+.lgNone{background:rgba(255,255,255,.14);color:#c9c4dc}
+.lgUid{font-size:11.5px;color:#8f88a8;margin-top:3px}
+.lgSlog{color:#c9c4dc;font-style:italic;margin:2px 0 10px}
+.lgStats{display:grid;grid-template-columns:repeat(3,1fr);gap:5px 10px;font-size:12.5px;color:#b6aed2}
+.lgStats b{color:#fff}
+.cardFoot{margin-top:9px;font-size:11.5px;color:#8f88a8}
+.rankRow{display:flex;align-items:center;gap:10px;padding:5px 9px;border-radius:8px;font-size:13.5px}
+.rankRow .rk{width:26px;color:#8f88a8;font-weight:700}
+.rankRow .nm{flex:1;color:#dcd7f0}
+.rankRow .sc{color:#9fe3b0;font-weight:700}
+.rankRow.me{background:linear-gradient(100deg,rgba(120,90,220,.38),rgba(80,60,160,.18));outline:1px solid rgba(180,150,255,.5)}
+.rankRow.him{background:rgba(255,215,120,.13);outline:1px solid rgba(255,215,120,.32)}
+.rankNote{margin-top:8px;font-size:11.5px;color:#8f88a8}
+
+#toast{position:absolute;left:50%;top:64px;transform:translateX(-50%) translateY(-8px);opacity:0;
+  background:rgba(30,20,50,.92);border:1px solid var(--edge);color:#ffc0d6;padding:7px 16px;border-radius:99px;
+  font-size:13px;transition:.3s;pointer-events:none;z-index:9}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 屏幕（标题/弹层） ---------- */
+.screen{position:absolute;inset:0;z-index:20;display:flex;align-items:center;justify-content:center}
+.screen.hidden{display:none}
+#title{background:
+  radial-gradient(90% 70% at 50% 8%,rgba(120,90,220,.30),rgba(0,0,0,0) 60%),
+  repeating-linear-gradient(0deg,rgba(140,190,255,.05) 0 2px,rgba(0,0,0,0) 2px 4px),
+  linear-gradient(180deg,#07070f,#100c1e 60%,#06060c);}
+#titleInner{text-align:center;padding:6vh 6vw;max-width:900px}
+#kicker{font-size:12.5px;letter-spacing:.6em;color:#9b93b8;margin-bottom:20px}
+#bigTitle{font-size:clamp(38px,7.4vw,92px);font-weight:800;letter-spacing:.08em;line-height:1.1;margin:0;
+  background:linear-gradient(100deg,#ffffff,#c9b8ff 40%,#7fd4ff 75%,#ffb0d0);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 6px 40px rgba(140,110,255,.45))}
+#sub{margin-top:18px;font-size:clamp(13px,1.6vw,17px);color:#bdb6d6;letter-spacing:.16em}
+#term{margin:26px auto 0;width:min(520px,84vw);text-align:left;font-family:ui-monospace,Consolas,"Cascadia Code",monospace;
+  font-size:12.5px;color:#8ef0c0;background:rgba(6,10,16,.72);border:1px solid rgba(140,240,190,.22);
+  border-radius:10px;padding:12px 14px;line-height:1.85}
+#term b{color:#ffd479;font-weight:400}
+#term i{color:#9db2ff;font-style:normal}
+#menu{margin-top:30px;display:flex;flex-direction:column;gap:11px;align-items:center}
+#menu button{width:min(280px,72vw);font-family:inherit;font-size:15.5px;letter-spacing:.16em;color:#efeaff;cursor:pointer;
+  background:linear-gradient(100deg,rgba(44,32,76,.9),rgba(22,18,40,.9));border:1px solid rgba(167,139,250,.4);
+  border-radius:12px;padding:13px 18px;transition:.2s}
+#menu button:hover{background:linear-gradient(100deg,rgba(92,66,158,.95),rgba(40,30,74,.95));transform:translateY(-2px)}
+#foot{margin-top:26px;font-size:11.5px;color:#6f688a;line-height:1.9;letter-spacing:.06em}
+
+#overlay{background:rgba(4,4,10,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:30}
+#ovPanel{width:min(900px,92vw);max-height:84vh;overflow:auto;background:linear-gradient(180deg,rgba(24,20,40,.97),rgba(14,12,26,.98));
+  border:1px solid var(--edge);border-radius:18px;padding:22px 24px;box-shadow:0 24px 70px rgba(0,0,0,.7)}
+#ovPanel h2{margin:0 0 4px;font-size:20px;letter-spacing:.1em}
+#ovPanel .ovsub{color:var(--dim);font-size:12.5px;margin-bottom:16px;letter-spacing:.08em}
+.ovrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.ovrow button{font-family:inherit;font-size:13px;color:var(--ink);background:rgba(40,32,66,.8);border:1px solid rgba(255,255,255,.14);
+  border-radius:9px;padding:7px 13px;cursor:pointer}
+.ovrow button:hover{background:rgba(74,56,124,.9)}
+.ovrow button.on{background:rgba(120,88,200,.9);border-color:#d6c6ff}
+.logline{padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.035);margin-bottom:8px;line-height:1.8;font-size:14px}
+.logline .who{color:var(--lzy);font-weight:700;margin-right:8px;font-size:13px}
+.logline.inner{background:rgba(80,140,255,.08)}
+.logline.inner .who{color:#8fd0ff;font-style:italic}
+.logline.narr{color:#c9c4dc}
+.slot{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);margin-bottom:9px}
+.slot .sname{font-weight:700;width:74px;color:#d9d2f2;font-size:14px}
+.slot .smeta{flex:1;font-size:12.5px;color:var(--dim);line-height:1.6}
+.slot button{font-family:inherit;font-size:12.5px;border-radius:8px;padding:6px 11px;cursor:pointer;color:var(--ink);
+  background:rgba(60,46,104,.8);border:1px solid rgba(255,255,255,.14)}
+.slot button:hover{background:rgba(96,72,164,.9)}
+.slot button[disabled]{opacity:.35;cursor:not-allowed}
+#ovClose{position:absolute;top:14px;right:18px;font-family:inherit;font-size:13px;color:#cfc8e8;cursor:pointer;
+  background:rgba(30,24,50,.9);border:1px solid rgba(255,255,255,.16);border-radius:9px;padding:6px 12px;z-index:31}
+.endcard{text-align:center}
+.endcard .et{font-size:clamp(26px,3.6vw,40px);font-weight:800;letter-spacing:.1em;margin:6px 0 10px;
+  background:linear-gradient(100deg,#fff,#c9b8ff 45%,#8fd8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.endcard .es{color:#cfc8e8;font-size:15px;line-height:2;margin-bottom:18px}
+.endcard .score{display:inline-flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;
+  font-size:13.5px;color:var(--dim)}
+.endcard .score b{color:#ff9fc0;font-weight:700}
+.locked{opacity:.45}
+[hidden]{display:none !important}
+@media (max-width:720px){
+  .sprite{height:62%}
+  #dlg{bottom:12px;padding:15px 16px 20px;border-radius:13px}
+  #text{min-height:5.2em}
+  #hud{font-size:11.5px;padding:8px 10px}
+  #chapterTag{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <div id="bg" class="bg"></div>
+    <div id="fx"></div>
+    <div id="sprites">
+      <div class="sprite" data-slot="left"></div>
+      <div class="sprite" data-slot="mid"></div>
+      <div class="sprite" data-slot="right"></div>
+    </div>
+    <div id="vignette"></div>
+    <div id="chap"><div id="chapNum"></div><div id="chapTitle"></div></div>
+
+    <div id="chat">
+      <div id="chatHead"><span class="dot"></span><span class="who" id="chatWho"></span></div>
+      <div id="chatBody"></div>
+      <div id="chatFoot">点击继续 ▼</div>
+    </div>
+    <div id="card">
+      <div id="cardHead"><span id="cardTitle"></span><span id="cardSub"></span></div>
+      <div id="cardBody"></div>
+    </div>
+
+    <div id="hud">
+      <div id="chapterTag">序章</div>
+      <div id="affBox"><span>♥</span><span id="affNum">0</span><div id="affBar"><i></i></div></div>
+      <div id="btns">
+        <button data-act="auto">自动</button>
+        <button data-act="skip">快进</button>
+        <button data-act="hist">记录</button>
+        <button data-act="save">存档</button>
+        <button data-act="load">读档</button>
+        <button data-act="cfg">设置</button>
+        <button data-act="home">标题</button>
+      </div>
+    </div>
+
+    <div id="dlg" class="hidden">
+      <div id="nameRow"><span id="name"></span><span id="tag"></span></div>
+      <div id="text"></div>
+      <div id="cont">▼</div>
+    </div>
+
+    <div id="choices" class="hidden"></div>
+    <div id="toast"></div>
+  </div>
+
+  <div id="title" class="screen">
+    <div id="titleInner">
+      <div id="kicker">OI 题材 · 青春恋爱 · 视觉小说</div>
+      <h1 id="bigTitle">大麦子</h1>
+      <div id="sub">XTBT × mzt　——一个关于场切黑题、榜单卡位，和一句「你爸爸我」的故事</div>
+      <div id="term">
+        <div>&gt; <i>while</i> (<b>true</b>) { mzt.<b>骂</b>(<b>"包子"</b>); XTBT.<b>回</b>(<b>"哦"</b>); }</div>
+        <div>&gt; <i>// 编译通过。你爸爸我拒绝写对拍。</i></div>
+      </div>
+      <div id="menu">
+        <button data-go="start">开始游戏</button>
+        <button data-go="continue">继续游戏</button>
+        <button data-go="endings">结局一览</button>
+        <button data-go="cfg">设置</button>
+      </div>
+      <div id="foot">全员虚构 · 与现实账号无关　建议点击/空格推进</div>
+    </div>
+  </div>
+
+  <div id="overlay" class="screen hidden"><button id="ovClose">关闭 ✕</button><div id="ovPanel"></div></div>
+</div>
+
+<script>
+/*<DATA>*/
+/* =======================================================================
+   角色 / 表情 定义
+   ======================================================================= */
+const CH = {
+  xtbt:{ key:'xtbt', name:'XTBT', tag:'初一·中游选手', col:'#c9a227',
+    skin:'#ffe4d6', skin2:'#eebfa8', hairA:'#141416', hairB:'#232327', hairC:'#5a5a63',
+    iris:'#a9743f', clothA:'#3b3a44', clothB:'#585662', clothC:'#9aa8e0', style:'boy' },
+  mzt:{ key:'mzt', name:'mzt', tag:'初二·场切黑题', col:'#b98cff',
+    skin:'#ffe4d6', skin2:'#eebfa8', hairA:'#101014', hairB:'#1e1e24', hairC:'#565663',
+    iris:'#7c5cd6', clothA:'#2f2440', clothB:'#4a3a63', clothC:'#b98cff', style:'mzt' },
+  whr:{ key:'whr', name:'whr', tag:'初三·OI 高手', col:'#7ee787',
+    skin:'#ffe4d6', skin2:'#eebfa8', hairA:'#241f2a', hairB:'#383246', hairC:'#6f6a86',
+    iris:'#89a08f', clothA:'#2f3a33', clothB:'#4a5a4e', clothC:'#a8c9b0', style:'boy' },
+  wzqh:{ key:'wzqh', name:'wzqh', tag:'初三·OI 高手', col:'#ffb86b',
+    skin:'#ffe4d6', skin2:'#eebfa8', hairA:'#3a2a20', hairB:'#5a4230', hairC:'#8f6f4e',
+    iris:'#c99a4a', clothA:'#3a3646', clothB:'#565066', clothC:'#c0b0d8', style:'boy2' }
+};
+const NAMES = { xtbt:'XTBT', mzt:'mzt', whr:'whr', wzqh:'wzqh', xq:'小Q', xj:'小J', xw:'小W', xl:'小L', xz:'小Z', coach:'教练', mom:'mzt 妈', other:'其他人', voice:'？？？' };
+const COLS  = { xtbt:'#c9a227', mzt:'#b98cff', whr:'#7ee787', wzqh:'#ffb86b', xq:'#f2b25c', xj:'#7ee787', xw:'#ff9fc0', xl:'#8ecbff', xz:'#c8b6ff', coach:'#f5b971', mom:'#ff9fc0', other:'#9aa4b2', voice:'#b0a8c8' };
+
+/* =======================================================================
+   剧本（指令表）—— 引擎逐条执行
+   ======================================================================= */
+var STORY = [];
+function BG(n){STORY.push(['BG',n]);}
+function FX(n){STORY.push(['FX',n]);}
+function CHAP(a,b){STORY.push(['CH',a,b]);}
+function SHOW(w,p,e){STORY.push(['SHOW',w,p,e||'calm']);}
+function HIDE(w){STORY.push(['HIDE',w]);}
+function Ex(w,e){STORY.push(['EXPR',w,e]);}
+function N(t){STORY.push(['N',t]);}
+function S(w,e,t){STORY.push(['S',w,e,t]);}
+function I(w,e,t){STORY.push(['I',w,e,t]);}
+function LB(n){STORY.push(['LB',n]);}
+function GO(n){STORY.push(['GO',n]);}
+function AFF(v){STORY.push(['AFF',v]);}
+function SET(k,v){STORY.push(['SET',k,v]);}
+function IF(k,op,v,a,b){STORY.push(['IF',k,op,v,a,b]);}
+function IFA(op,v,a,b){STORY.push(['IFA',op,v,a,b]);}
+function CH_3(q,o){STORY.push(['CHOICE',q,o]);}   /* o: [[文字, 心动, 跳转label], ...] */
+function END(name){STORY.push(['END',name]);}
+function QQ(who){STORY.push(['QQ',who]);}         /* 打开 / 切换 QQ 聊天窗 */
+function Q(who,text){STORY.push(['Q',who,text]);} /* 一条消息（占一次点击） */
+function QT(who){STORY.push(['QT',who]);}         /* 「对方正在输入…」 */
+function QX(){STORY.push(['QX']);}                /* 收起聊天窗 */
+function PROF(who,stage){STORY.push(['PROF',who,stage||'v1']);}   /* 洛谷个人主页卡 */
+function RANKS(list,note){STORY.push(['RANKS',list,note||'']);}   /* 榜单 */
+function CARDX(){STORY.push(['CARDX']);}          /* 收起卡片 */
+
+/* ============================================================ 序章 */
+BG('machine_room'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+/* ==================================================== 序章 · 四人间 */
+BG('dorm'); FX(null);
+CHAP('序章','四人间');
+N('初一那个暑假，XTBT 第一次住校。');
+N('集训队的宿舍是四人间：两张上下铺，一张长桌，一台落地扇，窗户朝西，下午晒得像烤箱。');
+N('没有蚊帐。教练的原话是：谁被叮了谁自己喷花露水，队费不报销。');
+N('XTBT 挑了靠门的下铺。他把行李塞进柜子，把插线板插上，然后发现墙上只有一个能用的插座。');
+N('这屋里四个人，他是唯一一个升初二的。另外三个铺位，全是初三的。');
+N('他到的时候，那三个人还在机房。');
+I('xtbt','calm','（一个插座，四张床。）');
+I('xtbt','calm','（这个夏天要打架了。）');
+N('晚上九点四十，门被推开了。');
+SHOW('mzt','left','smug');
+N('进来的人拎着一个很旧的电脑包，趿着拖鞋，头发是黑的，头顶翘着一撮。');
+N('他看了一圈屋里，把包扔到上铺，然后才看 XTBT。');
+S('mzt','smug','谁啊，包子。');
+N('XTBT 抬头。');
+S('xtbt','calm','……你叫我？');
+S('mzt','smug','这儿还有别人？');
+S('xtbt','calm','我叫 XTBT。初一的。');
+S('mzt','smug','哦。');
+S('mzt','smug','你爸爸我开学升初三。');
+N('他说完就踩着梯子爬上去，把电脑包抱在怀里，像抱着什么贵重物品。');
+SHOW('xtbt','right','calm');
+S('xtbt','calm','……你叫什么？');
+S('mzt','smug','mzt。');
+N('门又被推开了，这回进来两个人，一高一矮，都抱着笔记本。');
+SHOW('whr','mid','laugh');
+S('whr',null,'哟，大麦子回来了？');
+N('上铺的人连头都没回。');
+S('mzt','serious','滚。');
+S('whr',null,'怎么了嘛，大麦子。');
+S('mzt','serious','再叫一声你试试。');
+S('whr',null,'大——');
+S('mzt','serious','包子，我打死你。');
+N('whr 举手投降，把电脑扔到另一张下铺上。后面那个高个子的笑出了声。');
+S('wzqh',null,'他今天心情不好，死了一百多次。');
+S('mzt','serious','wzqh，你也想死？');
+S('wzqh',null,'我说的又不是你。');
+N('两个人一边吵一边去洗漱了。屋里安静下来。');
+S('xtbt','calm','……大麦子？');
+S('mzt','smug','别人瞎叫的。');
+S('xtbt','calm','为什么是麦子。');
+S('mzt','smug','因为神爱吃麦子。');
+I('xtbt','calm','（我一句都没听懂。）');
+I('xtbt','calm','（但我记住了一个词：包子。）');
+
+CH_3('他趴在上铺翻过身，等着你说话。', [
+  ['回他一个字：「哦。」', 2, 'p1_a'],
+  ['学他的句式：「你哪一届的，包子？」', 2, 'p1_b'],
+  ['不理他，继续收拾行李', 1, 'p1_c']
+]);
+
+LB('p1_a');
+Ex('mzt','surprise');
+S('xtbt','calm','哦。');
+N('上铺安静了两秒。');
+S('mzt','surprise','哦？');
+S('xtbt','calm','哦。');
+S('mzt','surprise','你就这个反应？');
+S('xtbt','calm','不然呢。');
+N('床板响了一下，一颗脑袋从上铺探下来。');
+S('mzt','surprise','包子，你有点意思。');
+S('mzt','smug','你爸爸我骂人骂了两年，第一次有人回「哦」。');
+S('xtbt','calm','那你以后多骂。');
+S('mzt','smug','……');
+S('mzt','smug','行。你等着。');
+I('xtbt','calm','（我不知道我做对了什么。）');
+I('xtbt','calm','（但我感觉我做对了。）');
+GO('p1_end');
+
+LB('p1_b');
+Ex('mzt','surprise');
+S('xtbt','calm','你哪一届的，包子。');
+N('梯子响了三下。mzt 站到他面前。');
+N('他比 XTBT 高一头，肩膀很窄，站在那儿像一根插歪了的旗杆。');
+S('mzt','smug','你刚才说什么。');
+S('xtbt','calm','你哪一届的，包子。');
+N('两个人对视了三秒。');
+N('然后 mzt 笑了。');
+S('mzt','laugh','行啊。');
+S('mzt','smug','你爸爸我记住你了，包子。');
+S('xtbt','calm','我叫 XTBT。');
+S('mzt','smug','我知道。我说的是你以后的名字。');
+N('走廊外，刚被骂走的那位又探了一下头。');
+S('xj',null,'（小声）完了，大麦子找到同类了。');
+S('mzt','serious','小J，你再说一遍。');
+N('头又缩回去了。');
+I('xtbt','calm','（他笑的时候，眼睛下面有一点很累的东西。）');
+I('xtbt','calm','（我看错了也说不定。）');
+GO('p1_end');
+
+LB('p1_c');
+Ex('mzt','smug');
+N('XTBT 没理他。他把衣服一件件叠好，塞进柜子最下面那层。');
+N('上铺沉默了一会儿。');
+S('mzt','smug','喂。');
+N('他继续叠。');
+S('mzt','smug','包子。');
+N('他把柜门关上。');
+S('mzt','smug','……你耳朵红了。');
+N('XTBT 的手停了一下。');
+S('xtbt','calm','那是灯。');
+S('mzt','laugh','哦，灯。');
+S('mzt','smug','行，灯。你爸爸我睡了，灯。');
+N('他把被子蒙在头上。过了两分钟，被子里传出一句。');
+S('mzt','smug','（被子里的声音）明天机房见，包子。');
+I('xtbt','calm','（他连我的名字都没记住。）');
+I('xtbt','calm','（可他说明天见。）');
+GO('p1_end');
+
+LB('p1_end');
+BG('dorm_night'); FX(null);
+N('那天晚上十一点熄灯。');
+N('灯灭之后，屋里安静了大概四分钟。');
+N('然后上铺传来键盘声。很轻，很急，一下接一下，几乎没有停过。');
+N('XTBT 躺在那儿听。他听得出那不是打字——打字有停顿，这个没有节奏上的犹豫。');
+I('xtbt','calm','（凌晨了还在写题。）');
+I('xtbt','calm','（他今天摸底赛四百分。）');
+I('xtbt','calm','（原来四百分是这么来的。）');
+N('键盘声一直响到快一点。中间有一次，上铺的人很轻地骂了一句，然后又从头开始。');
+N('XTBT 睡着了。');
+BG('dorm'); FX(null);
+N('第二天早上他起来的时候，上铺已经空了。');
+N('他打开洛谷，准备把昨天没写完的那题补上，然后发现右上角有个小红点。');
+N('一条私信。发信人：absyyyy121。');
+N('「题单给你拉了：入营基础四十题。今天之内切完。」');
+N('「做不到就叫你包子。」');
+I('xtbt','calm','（他怎么有我的洛谷号。）');
+I('xtbt','calm','（……算了，他连我的名字都记不住，却记得给我拉题单。）');
+N('他点开了发信人的名字。');
+PROF('mzt','v1');
+N('昵称是 absyyyy121，名牌上挂着金钩，签名是系统默认的那句。');
+N('成就那一栏写着 0。');
+CARDX();
+I('xtbt','calm','（这就是昨天那个说我爸爸的人。）');
+I('xtbt','calm','（「这个家伙很懒，什么也没有留下」。）');
+I('xtbt','smile','（他主页比我干净。）');
+N('那天晚自习，他忍不住问了一句。');
+S('xtbt','calm','你昨天晚上一直在写题？');
+S('mzt','smug','没写。');
+S('xtbt','calm','那你键盘响到一点。');
+S('mzt','smug','打蔚蓝。');
+S('xtbt','calm','……什么？');
+S('mzt','smug','Celeste。爬山那个。');
+S('mzt','smug','你爸爸我昨晚死了一百八十次。');
+S('xtbt','calm','……死了一百八十次你还打？');
+S('mzt','smug','死一百八十次怎么了。');
+S('mzt','smug','死了就重来。');
+N('他说这句话的时候，语气很平常，像在说一道题的边界条件。');
+N('然后他把耳机塞回耳朵里，继续低头敲键盘。');
+I('xtbt','calm','（他昨晚不是在写题。）');
+I('xtbt','calm','（可我听着那声音，居然觉得挺安心。）');
+
+BG('classroom'); FX(null);
+N('集训的机房在教学楼二层——初二这一间就在这里；初三在楼上，三层。');
+N('初二这间的桌子分成三组：第一组和第二组每排两个人，第三组人多，挤得满满当当。');
+N('XTBT 在第三组第三排靠窗；小Q 在第一组第二排靠左；小J 在第二组第三排靠右，小W 就坐他旁边。');
+N('这几个位置，一整个夏天都没人动过。');
+N('入营第三天的模拟赛，两间机房一起考，榜也一起出。');
+N('初二这边的人挤在讲台前那块屏幕下面看。');
+N('榜单刷新出来的时候，第一行就是那个熟悉的名字。');
+RANKS([['mzt','400'],['小J','310'],['小Q','300'],['小L','290'],['小Z','280'],['xtbt','200']],
+  'mzt：四题全 A，用时最短。XTBT：两题半。');
+N('XTBT 往下找，在倒数第十七行找到了自己的名字。');
+N('他又往上翻了翻。第一名后面有个小星星，是教练加的。');
+I('xtbt','calm','（400 分。）');
+I('xtbt','calm','（我 200。）');
+I('xtbt','smile','（……他还给我拉了一张四十题的题单。）');
+I('xtbt','calm','（原来他给我留的，是他自己两倍的分量。）');
+CARDX();
+BG('classroom'); FX(null);
+N('下午补题的时候，楼上会下来人。');
+N('推门第一个进来的永远是那个头发翘着一撮的人。');
+N('他把电脑往 XTBT 斜后方那张空桌上一放，拉开椅子坐下。');
+SHOW('mzt','right','smug');
+S('mzt','smug','看什么看。');
+S('xtbt','calm','……你怎么来这边。');
+S('mzt','smug','补题。');
+S('mzt','smug','哪间屋子都一样。');
+N('那天下午他一道题都没讲。他就坐在 XTBT 后面，敲了两个小时的键盘。');
+I('xtbt','calm','（这两个小时里，他一次都没看过我。）');
+I('xtbt','calm','（可我每次回头，他都刚好在我后面。）');
+N('——就这样，初一那个暑假开始了。');
+
+/* ==================================================== 第一章 · 大麦子 */
+BG('machine_room'); FX(null);
+CHAP('第一章','大麦子');
+HIDE('mzt'); HIDE('whr'); HIDE('wzqh'); HIDE('xtbt');
+N('住校的第三天，两间机房的位置就固定了。');
+N('集训的机房在教学楼二层——初二这一间就在这里；初三在楼上，三层。');
+N('XTBT 在第三组第三排靠窗，一整个夏天没人动过。');
+N('mzt 是初三的，本来在楼上那间。');
+N('但每天下午补题，他会抱着电脑从三层下来，坐在 XTBT 斜后方那张空桌上。');
+N('这样他一抬头，就能看见 XTBT 的屏幕。');
+N('后来 XTBT 才明白，他每次挑的都是那个位置。');
+N('下午补题的时间，小W 才凑过来。');
+N('她专挑这个时候，因为大麦子在楼上那间，听不见。');
+N('小W 坐在饮水机旁边，她掌握全队的消息，包括谁抄了谁的代码、谁昨天半夜还在线。');
+SHOW('xtbt','left','calm');
+S('xw',null,'新来的，你知道大麦子为什么叫大麦子吗？');
+S('xtbt','calm','不知道。');
+S('xw',null,'原来不叫这个。');
+S('xw',null,'他原来满口「包子」，一天能骂八十遍。');
+S('xw',null,'上个月集训，教练把他叫到办公室去了。');
+S('xw',null,'教练说：mzt，你这张嘴，再叫一次包子，我今年的评语就给你写满。');
+S('xw',null,'他出来以后就不叫包子了。');
+S('xtbt','calm','那他叫什么？');
+S('xw',null,'叫麦子。');
+S('xw',null,'后来大家就管他叫大麦子了。');
+S('xtbt','calm','……他自己不知道？');
+S('xw',null,'他知道啊。');
+S('xw',null,'谁叫他他就骂谁。');
+S('xw',null,'但全队都叫。');
+I('xtbt','calm','（所以「大麦子」这个外号的意思，是大家被他骂了两年之后，终于抓到他把柄。）');
+N('话没说完，楼梯上响起了脚步声。');
+SHOW('mzt','right','serious');
+N('他抱着电脑下来，正好听见最后两句。');
+N('背后传来椅子响。');
+S('mzt','serious','小W。');
+S('xw',null,'啊。');
+S('mzt','serious','你早饭还吃不吃了。');
+S('xw',null,'我又没说你坏话！');
+S('mzt','serious','你说了我最多的坏话。');
+S('xw',null,'那是情报！');
+S('mzt','serious','包子。');
+S('xw',null,'（抱着早饭跑了）');
+N('mzt 拉开椅子坐下，把耳机挂到脖子上，看了 XTBT 一眼。');
+S('mzt','smug','听到多少。');
+S('xtbt','calm','从头。');
+S('mzt','smug','那你现在知道了。');
+S('mzt','smug','谁叫你叫一声试试。');
+N('XTBT 看着他。那天早上阳光很好，机房的风扇转得很慢。');
+N('他忽然想起昨天晚上那句「死了就重来」。');
+I('xtbt','calm','（他骂人的时候，句子都很短。）');
+I('xtbt','calm','（短到像是不想让人问下去。）');
+
+CH_3('他在等你回话。', [
+  ['当面叫一声「大麦子」，看他什么反应', 2, 'c2_a'],
+  ['把话接住：「那你自己叫自己什么？」', 2, 'c2_b'],
+  ['「知道了。不叫。」', 1, 'c2_c']
+]);
+
+LB('c2_a');
+Ex('mzt','surprise');
+S('xtbt','calm','大麦子。');
+N('整个机房安静了半秒。');
+N('mzt 站起来的时候椅子腿在地上划了一声。');
+S('mzt','surprise','你再叫一遍。');
+S('xtbt','calm','大麦子。');
+N('他盯着 XTBT 看了三秒。');
+N('然后他坐回去了。');
+S('mzt','smug','……行。');
+S('mzt','smug','你爸爸我记住你了。');
+S('xtbt','calm','你已经说过一次了。');
+S('mzt','smug','这次是真记住。');
+N('后来 XTBT 发现，从那天起，mzt 在机房里再没叫过他包子。');
+N('只叫他名字：XTBT。');
+N('全队只有他一个人有这个待遇，而他当时完全不知道这意味着什么。');
+GO('c2_end');
+
+LB('c2_b');
+Ex('mzt','smug');
+S('xtbt','calm','那你自己叫自己什么？');
+S('mzt','smug','你爸爸我。');
+S('xtbt','calm','……那不是名字。');
+S('mzt','smug','是称呼。');
+S('xtbt','calm','那别人叫你大麦子，不是一样。');
+S('mzt','smug','不一样。');
+N('他把耳机戴上，又摘下来。');
+S('mzt','smug','那是别人叫的。');
+S('mzt','smug','我自己不叫。');
+N('他说完就低头看题了。');
+I('xtbt','calm','（「别人叫的」和「自己叫的」。）');
+I('xtbt','calm','（他在这两个之间划了一条线。）');
+GO('c2_end');
+
+LB('c2_c');
+Ex('mzt','calm');
+S('xtbt','calm','知道了。不叫。');
+N('mzt 的手在键盘上停了一下。');
+S('mzt','calm','……哦。');
+N('他本来准备好了要骂人。这下反倒没话了。');
+S('mzt','calm','那你叫我什么。');
+S('xtbt','calm','mzt。');
+S('mzt','calm','嗯。');
+N('他戴上耳机，过了一会儿又把一边摘下来。');
+S('mzt','smug','你比他们懂事。');
+S('mzt','smug','懂事的人在我这儿有优待。');
+S('xtbt','calm','什么优待？');
+S('mzt','smug','你爸爸我不骂你。');
+S('xtbt','calm','那你刚才骂了。');
+S('mzt','smug','那是提醒。');
+GO('c2_end');
+
+LB('c2_end');
+BG('machine_room'); FX(null);
+N('那天中午，XTBT 顺手点开了他的洛谷主页。');
+PROF('mzt','v1');
+N('成就那一栏还是 0。');
+CARDX();
+N('旁边的小J 凑过来看了一眼，笑了。');
+SHOW('xtbt','left','calm');
+S('xj',null,'所以我说啊，他吹得那么厉害，成就 0。');
+S('xtbt','calm','他名牌是金钩。');
+S('xj',null,'成就 0 就是 0。');
+N('斜后方的人头也没抬，键盘敲了两下，然后开口。');
+S('mzt','calm','那是因为我没认证。');
+S('xj',null,'你认证一下不就完了。');
+S('mzt','calm','不。');
+S('xj',null,'为什么。');
+S('mzt','smug','神不需要认证。');
+N('小J 张了张嘴，最后什么也没说，走了。');
+I('xtbt','calm','（他刚才那句话，明明是胡说。）');
+I('xtbt','calm','（可他说得理直气壮，我差点信了。）');
+I('xtbt','smug','（……不。我想的是别的事。）');
+I('xtbt','calm','（他连自己的主页都不肯认真填一下。）');
+I('xtbt','calm','（宁可被人拿成就 0 笑话。）');
+
+/* ==================================================== 第二章 · 单方面拉爆 */
+BG('machine_room'); FX(null);
+CHAP('第二章','单方面拉爆');
+N('集训营一周一次模拟赛。');
+N('第一次正式模考，四个半小时，四道题。');
+N('XTBT 把它们一道一道读完了。第一题会，第二题想，第三题空着，第四题只抄了题面。');
+N('他写了两个小时四十分钟，交卷的时候手心是湿的。');
+N('出榜是在下午，两间机房一起看的榜。');
+RANKS([['mzt','400'],['whr','320'],['wzqh','300'],['小Q','270'],['小J','240'],['xtbt','110']],
+  'mzt：第三题二十分钟，第四题四十五分钟，四题全 A，全场唯一。');
+N('XTBT 在倒数第二排找到了自己。');
+N('110 分。第一题满分，第二题部分分，第三题零分。');
+N('第三题是黑题。');
+N('XTBT 交了六次，六次都挂。第七次他不敢交了。');
+N('mzt 从头到尾交了一次。一次就过。');
+I('xtbt','calm','（一次。）');
+I('xtbt','calm','（二十分钟。）');
+I('xtbt','calm','（我读题读了十五分钟。）');
+CARDX();
+N('散场以后，XTBT 没走。他把自己的代码调出来，一行一行看。');
+N('下午补题的时间到了，楼梯上有脚步声。他从三楼下来了。');
+SHOW('xtbt','left','calm'); SHOW('mzt','right','smug');
+N('他把电脑放在斜后方那张空桌上，打完最后一把蔚蓝，把耳机摘下来挂在脖子上，往后一靠。');
+S('mzt','smug','哪题。');
+S('xtbt','calm','第三题。');
+S('mzt','smug','你那六次我都看了。');
+N('XTBT 回过头。');
+S('mzt','smug','你猜你错在哪。');
+S('xtbt','calm','……不知道。');
+S('mzt','smug','你第七次如果交上来，还是挂。');
+S('mzt','smug','因为你前六次改的都是同一行。');
+N('他把椅子挪过来，手指点在 XTBT 屏幕上那一段。');
+S('mzt','smug','这一行你是错的，但你不敢动它。');
+S('mzt','smug','你每次都在它外面加东西，加六个，一个都没用。');
+S('xtbt','calm','……为什么不敢动。');
+S('mzt','smug','因为你写完就没再想过它。');
+S('mzt','smug','你只是在跟评测机赌。');
+N('机房里很安静，只有风扇的声音。');
+I('xtbt','calm','（他看了我那六次。）');
+I('xtbt','calm','（今天下午他一直在打蔚蓝。）');
+I('xtbt','calm','（……他什么时候看的。）');
+
+CH_3('他坐在你旁边，等你自己动手。', [
+  ['把那一段删掉，当着他的面重写一遍', 2, 'c3_a'],
+  ['问他：「那你写一遍给我看？」', 2, 'c3_b'],
+  ['说「我明天再看」，先走', 1, 'c3_c']
+]);
+
+LB('c3_a');
+Ex('mzt','calm');
+N('XTBT 把那一行删了。');
+N('屏幕空了一块，光标在闪。');
+N('他重新想了三分钟，把那段写出来，交上去。');
+N('还是挂。');
+N('但这一次，评测机告诉了他为什么。');
+S('mzt','smug','看。');
+S('mzt','smug','你刚才那一行写了多久？');
+S('xtbt','calm','十分钟。');
+S('mzt','smug','前面六次加起来两个小时。');
+S('mzt','smug','两个小时换十分钟。你爸爸我算得比你清楚。');
+N('他把椅子推回去。');
+S('mzt','smug','这题你今天还是过不了。');
+S('xtbt','calm','……我知道。');
+S('mzt','smug','但你现在知道为什么过不了了。');
+S('mzt','smug','这就是区别。');
+S('mzt','smug','以后写挂了不要重复交。');
+S('mzt','smug','重复交的人，一辈子都在原地。');
+I('xtbt','calm','（那道题后来我又挂了四次。）');
+I('xtbt','calm','（第五次过的时候，我已经升初二了。）');
+GO('c3_end');
+
+LB('c3_b');
+Ex('mzt','smug');
+S('xtbt','calm','那你写一遍给我看。');
+S('mzt','smug','凭什么。');
+S('xtbt','calm','因为你说得这么清楚。');
+N('mzt 看了他一会儿，把键盘拉过去。');
+N('他敲了大概九十秒。');
+N('交。绿。');
+S('mzt','smug','看到没。');
+S('xtbt','calm','看到了。');
+S('mzt','smug','我没写对拍，也没调。');
+S('mzt','smug','因为我在读题的时候就想完了。');
+S('xtbt','calm','那你刚才说的那一行，为什么我会写错。');
+S('mzt','smug','因为你读题的时候在想别的。');
+N('XTBT 愣了一下。');
+I('xtbt','calm','（他说得对。）');
+I('xtbt','calm','（刚才我读题的时候在想，这次不要再挂了。）');
+I('xtbt','calm','（我根本没有在读题。）');
+GO('c3_end');
+
+LB('c3_c');
+Ex('mzt','calm');
+S('xtbt','calm','我明天再看吧。');
+S('mzt','calm','嗯。');
+N('XTBT 收好书包，走到门口。');
+N('背后的人一直没说话。');
+S('mzt','calm','XTBT。');
+S('xtbt','calm','……嗯？');
+S('mzt','calm','你那道题，明天你也不会看。');
+S('mzt','calm','你今晚会想它，然后明天早上你会觉得自己想通了，然后你会再交一次。');
+S('mzt','calm','然后你还挂。');
+N('XTBT 站在门口，脸有点热。');
+S('mzt','smug','我没在骂你。');
+S('mzt','smug','我是在说我自己的第一年。');
+N('他说完就戴上耳机了。');
+I('xtbt','calm','（他这句话，比骂人还难听。）');
+I('xtbt','calm','（但我知道他说的是真的。）');
+GO('c3_end');
+
+LB('c3_end');
+BG('machine_room_night'); FX(null);
+N('那天晚上九点半，机房里还剩四个人。');
+N('whr 和 wzqh 在白板上对一道题的两种做法吵了半个小时。');
+N('mzt 在他自己的位置上敲键盘，键盘声又快又轻。');
+N('XTBT 把那道题重新写完，提交，绿色。');
+N('他转头想说话，发现 mzt 已经不在座位上了。');
+N('机房后门开着，走廊的声控灯亮着，一个人靠在栏杆上，低着头看屏幕。');
+N('屏幕上是那个很小的人影，在悬崖边上往下掉。');
+N('掉下去，重来。掉下去，重来。');
+I('xtbt','calm','（原来他打蔚蓝的时候，表情是这样的。）');
+I('xtbt','calm','（没有骂人，也没有笑。）');
+I('xtbt','calm','（就是很安静地，掉下去，重来。）');
+
+/* ==================================================== 第三章 · 熄灯之后 */
+BG('dorm_night'); FX(null);
+CHAP('第三章','熄灯之后');
+HIDE('xtbt'); HIDE('mzt'); HIDE('whr');
+N('集训宿舍的规矩：十一点熄灯，熄灯以后不许开电脑。');
+N('规定是给外人看的。');
+N('熄灯之后，四个人会各占一个角落，把被子里塞个枕头当支架，屏幕亮度拉到最低。');
+N('走廊里的声控灯一响，四个人一起按灭屏幕。');
+N('然后等灯灭了，再一起亮起来。');
+N('这套动作他们做得比开机还熟。');
+SHOW('mzt','left','calm'); SHOW('xtbt','right','calm');
+N('XTBT 的电脑是家里给的，很旧，风扇响。');
+N('mzt 的电脑包比他的新，但他从不关机，也从不装任何多余的软件——除了一个游戏。');
+S('mzt','smug','喂。');
+S('xtbt','calm','嗯。');
+S('mzt','smug','你那台机器跑得动蔚蓝吗。');
+S('xtbt','calm','不知道。');
+S('mzt','smug','试试。');
+N('他从被子里伸出一只胳膊，把耳机递过来。');
+S('mzt','smug','拿着。你爸爸我今天不打了，看你的。');
+N('XTBT 爬下床，坐到长桌旁边，插上耳机。');
+N('他从来没见过这种游戏。没有血条，没有等级，只有一座山，和一扇永远关着的门。');
+N('第一个人影第一次跳的时候，他就死了。死在一个坑里，坑离他只有两格。');
+N('第……不知道多少次的时候，他放弃了数。');
+N('屏幕上那行死亡计数跳到三百四十一。');
+S('mzt','smug','看右下角。');
+S('xtbt','calm','……三百四十一。');
+S('mzt','smug','才三百四十一。');
+S('xtbt','calm','你多少。');
+S('mzt','smug','这一关我第一次过的时候，死了一百八十次。');
+S('xtbt','calm','……才一百八十？');
+S('mzt','smug','才？');
+S('mzt','smug','我打了两个星期。');
+S('mzt','smug','你一个小时就死了三百四十一次。');
+S('mzt','smug','你爸爸我这关死了一百八十次，用了十四个晚上。');
+N('XTBT 转过头。');
+N('上铺的人躺在黑暗里，眼睛看着天花板，声音很平。');
+S('mzt','calm','我不是天才。');
+S('mzt','calm','我只是不死完。');
+N('走廊的声控灯亮了。四个人一起按灭屏幕。');
+N('等灯灭了，XTBT 才把那句话在脑子里重新读了一遍。');
+I('xtbt','calm','（他死一百八十次，用了两个星期。）');
+I('xtbt','calm','（我死三百四十一次，用了一个小时。）');
+I('xtbt','calm','（他说他不是天才。）');
+I('xtbt','calm','（……我大概就是从那天晚上开始，想一直待在他旁边的。）');
+
+CH_3('熄灯了，他在上铺等你回答。', [
+  ['把耳机递回去，说「我明天还来打」', 2, 'c4_a'],
+  ['问他：「你为什么要打这个？」', 2, 'c4_b'],
+  ['装作困了，说明天再说', 1, 'c4_c']
+]);
+
+LB('c4_a');
+Ex('mzt','smug');
+S('xtbt','calm','我明天还来打。');
+N('上铺安静了两秒。');
+S('mzt','smug','打不过就别打了。');
+S('xtbt','calm','你没死完。');
+S('mzt','smug','……');
+S('mzt','smug','行。');
+N('耳机被收回去的时候，XTBT 听见他很小声地说了一句什么。');
+N('他没听清，也没问。');
+I('xtbt','calm','（他说的是「明天早上把电脑带上」。）');
+I('xtbt','calm','（我后来说我听见了，他不承认。）');
+GO('c4_end');
+
+LB('c4_b');
+Ex('mzt','calm');
+S('xtbt','calm','你为什么要打这个？');
+N('上铺沉默了很久，久到 XTBT 以为他睡了。');
+S('mzt','calm','因为它不会骗我。');
+S('xtbt','calm','……什么？');
+S('mzt','calm','死多少次就是多少次。');
+S('mzt','calm','跳不过去就是跳不过去，跟你是谁没有关系。');
+S('mzt','calm','我打题的时候，别人看我是金钩。');
+S('mzt','calm','爬山的时候，没人看我。');
+N('XTBT 睁着眼睛躺着，看着上铺的床板。');
+I('xtbt','calm','（他说这句话的时候，语气跟平时完全不一样。）');
+I('xtbt','calm','（不是神。是一个初二的学生。）');
+I('xtbt','calm','（……我一晚上都没睡着。）');
+GO('c4_end');
+
+LB('c4_c');
+Ex('mzt','smug');
+S('xtbt','calm','困了。明天再说。');
+S('mzt','smug','废物。');
+N('XTBT 爬回床上。上铺翻了个身，键盘声又响起来了。');
+N('很轻，很急，一下接一下。');
+N('他躺着听了很久，忽然明白了一件事。');
+I('xtbt','calm','（他每天打到一点，不是因为他强。）');
+I('xtbt','calm','（是因为他睡不着的那些时候，只有这个游戏陪他。）');
+I('xtbt','calm','（……我明天陪他打。）');
+GO('c4_end');
+
+LB('c4_end');
+BG('machine_room'); FX(null);
+N('第二天，XTBT 把他自己的对拍程序写完了。');
+N('他给 mzt 发过去，说：你以后可以用这个。');
+N('对面回了一个字：哦。');
+N('三天以后，XTBT 在他的文件夹里看到一个新的压缩包。');
+N('名字叫「xtbt_对拍_8月17日_v3」。');
+N('里面是二十组数据，每组都标着「这一组会挂」「这一组你上次挂了」。');
+N('最后一行是一句注释。');
+N('「包子，这组是最难的。你要是过了，你就不是我认识的那个人了。」');
+I('xtbt','calm','（他改了我的对拍，还顺手给我造了数据。）');
+I('xtbt','smile','（文件名叫 v3。他改了两遍。）');
+I('xtbt','calm','（他嘴上说哦。）');
+
+/* ==================================================== 第四章 · 卡位 */
+BG('machine_room'); FX(null);
+CHAP('第四章','卡位');
+HIDE('xtbt'); HIDE('mzt');
+N('八月，集训营开始每周排名。');
+N('规则很简单：一周之内所有提交折算成积分，谁分高谁在前面。');
+N('XTBT 从第 41 名开始爬。');
+N('第一周第 33，第二周第 26，第三周第 19。');
+N('他每天在机房坐十一个小时。回到宿舍还打蔚蓝，死了就重来。');
+N('到第四周周日晚上，榜单刷新。');
+RANKS([['mzt','520'],['whr','470'],['wzqh','455'],['小Q','430'],['xtbt','421']],
+  'XTBT 第五名。他和第一名之间，差 99 分。');
+N('第八周。');
+RANKS([['mzt','600'],['xtbt','598'],['whr','560'],['小Q','520'],['wzqh','510']],
+  'XTBT 第二名。他和第一名之间，差 2 分。');
+CARDX();
+N('XTBT 盯着那两分看了很久。');
+N('那一周他做的题，比之前任何一周都多。');
+N('第九周，他算好了：再拿三分，就能上去。');
+N('周一早上榜单刷新。');
+RANKS([['mzt','603'],['xtbt','598'],['whr','560'],['小Q','520'],['wzqh','510']],
+  'mzt：+3。');
+CARDX();
+N('不多不少，三分。');
+N('下午补题，楼梯响了两下。他从三楼下来，把电脑放在 XTBT 斜后方。');
+SHOW('xtbt','left','surprise'); SHOW('mzt','right','smug');
+S('xtbt','surprise','你……');
+S('mzt','smug','我怎么了。');
+S('xtbt','calm','你昨天一天都没过来。');
+S('mzt','smug','我在宿舍打蔚蓝。');
+S('xtbt','calm','你晚上交了七道题。');
+S('mzt','smug','哦。');
+S('mzt','smug','顺手的。');
+N('XTBT 把屏幕转过去给他看。');
+N('第一名那一栏：603。第二名那一栏：598。');
+S('mzt','smug','差五分。');
+S('xtbt','calm','差三分的时候你交了七道。');
+S('mzt','smug','那说明我手快。');
+N('他把耳机戴上，不再说话。');
+I('xtbt','calm','（他一周只过来两次。）');
+I('xtbt','calm','（他能精确到分。）');
+I('xtbt','calm','（他到底想干什么。）');
+
+CH_3('你盯着榜单上那两行。', [
+  ['继续追。追到超过他为止', 2, 'c5_a'],
+  ['直接去问他：「你是不是故意的。」', 2, 'c5_b'],
+  ['把自己的排名停在他下面一名，不追了', 2, 'c5_c']
+]);
+
+LB('c5_a');
+Ex('mzt','smug');
+N('XTBT 没问。他继续追。');
+N('第十周他做了三十七道题，交了两百多次。');
+N('周日晚上榜单出来。');
+RANKS([['mzt','640'],['xtbt','638'],['whr','600'],['小Q','570'],['wzqh','560']],
+  '还是差 2 分。');
+CARDX();
+N('XTBT 把键盘往前一推，趴在桌子上笑了一声。');
+S('xtbt','calm','你是不是有病。');
+S('mzt','smug','我交题的权利，你爸爸我自己做主。');
+S('xtbt','calm','我追了一整个暑假。');
+S('mzt','smug','那挺好的。');
+S('mzt','smug','你原来四十一。');
+I('xtbt','calm','（……我原来四十一。）');
+I('xtbt','calm','（我从来没想过这个。）');
+GO('c5_end');
+
+LB('c5_b');
+Ex('mzt','calm');
+S('xtbt','calm','你是不是故意的。');
+N('mzt 敲键盘的手停了。');
+S('mzt','calm','什么故意的。');
+S('xtbt','calm','我上一分，你交七道题。');
+S('mzt','calm','……');
+N('他把耳机摘下来，挂在脖子上。这是 XTBT 第一次看见他摘耳机之后没说话。');
+S('mzt','calm','你想多了。');
+S('xtbt','calm','那你为什么不过来。');
+S('mzt','calm','我不想去。');
+S('mzt','calm','太吵。');
+N('他说完就站起来了，拿着电脑包往外走。走到门口的时候停了一下。');
+S('mzt','calm','你追得挺好的。');
+S('mzt','calm','别停。');
+I('xtbt','calm','（他说别停。）');
+I('xtbt','calm','（可他跑得比我快，还站在那里等我。）');
+GO('c5_end');
+
+LB('c5_c');
+Ex('mzt','surprise');
+N('XTBT 停止提交了。');
+N('那一周他一道题都没交，排名掉到第七。');
+N('第二周，榜单一刷新，全队都愣了。');
+RANKS([['mzt','620'],['whr','600'],['xtbt','590'],['wzqh','580'],['小Q','560']],
+  'mzt 从第一掉到第一。XTBT 停在第三，一直没动。');
+CARDX();
+N('散场之后，mzt 走到他桌子边上，把耳机往桌上一摔。');
+S('mzt','serious','你为什么不交了。');
+S('xtbt','calm','不想追了。');
+S('mzt','serious','你爸爸我天天在榜上等你。');
+S('mzt','serious','你就给我停在这儿？');
+S('xtbt','calm','那你呢。');
+S('xtbt','calm','你为什么不让我过去。');
+N('mzt 张了张嘴。');
+N('他最后什么也没说，捡起耳机走了。');
+N('那天晚上，XTBT 在宿舍楼下看见他一个人坐到十一点半。')
+N('屏幕的光照在他脸上，那个人影一直在往下掉。');
+I('xtbt','calm','（我好像问到了一个不该问的地方。）');
+I('xtbt','calm','（但我不知道是哪里。）');
+GO('c5_end');
+
+LB('c5_end');
+BG('machine_room_night'); FX(null);
+N('第二天早上，XTBT 打开洛谷，收到一条私信。');
+N('「榜单不是我弄的。」');
+N('「我交题是因为我想交。」');
+N('「你爱交不交。」');
+N('下面还有一条，隔了十分钟才发出来。');
+N('「不过我下周还在第一行。」');
+N('「你要上来，得自己爬。」');
+I('xtbt','smile','（这条私信，他打了十分钟。）');
+I('xtbt','calm','（他删了多少遍，我都能想象出来。）');
+
+/* ==================================================== 第五章 · absyyyy121 */
+BG('machine_room'); FX(null);
+CHAP('第五章','absyyyy121');
+HIDE('xtbt'); HIDE('mzt');
+N('八月末，队里开了个临时群，用来发集训通知。');
+N('群建起来的第三天，小L 发了一条消息。');
+S('xl',null,'问一下，absyyyy121 是谁啊。');
+S('xl',null,'这名字看着像被狗啃过。');
+N('群里安静了三秒。');
+S('xj',null,'哈哈哈哈。');
+S('xj',null,'你完了。');
+S('xl',null,'怎么了？');
+S('xj',null,'那是大麦子。');
+N('下午补题，mzt 抱着电脑从三层下来，坐在他斜后方。');
+N('他后面那台键盘的声音停了。');
+SHOW('mzt','right','calm');
+S('xl',null,'真的假的？这名字怎么来的。');
+S('xw',null,'我知道我知道。');
+S('xw',null,'初一的时候，有人跟他说，改个名字能中奖。');
+S('xw',null,'他就去改了。');
+S('xj',null,'改成什么不好，改成 absyyyy。');
+S('xj',null,'前面加个 abs，后面加四个 y，什么审美。');
+S('xw',null,'而且改完还不能马上改回来。');
+S('xw',null,'要等七天。');
+S('xj',null,'他等了七天，然后就不改了。');
+S('xl',null,'为什么不改？');
+S('xw',null,'不知道啊。');
+N('群里笑成一团。');
+N('XTBT 回过头。');
+N('mzt 在自己位置上坐着，肩膀在抖。');
+N('他在笑。');
+N('他笑得比群里任何一个人都大声。');
+S('mzt','laugh','哈哈哈哈。');
+S('mzt','laugh','absyyyy121！');
+S('mzt','laugh','你爸爸我这是艺名！');
+S('mzt','laugh','懂不懂！');
+N('他一边笑一边敲键盘，把这句话打进了群里，后面跟了三个感叹号。');
+N('群里更热闹了。');
+N('机房里有六七个人跟着笑。');
+N('只有 XTBT 没有笑。');
+I('xtbt','calm','（他的肩膀在抖。）');
+I('xtbt','calm','（但他笑的时候，眼睛没有跟上。）');
+I('xtbt','calm','（我妈说过一句话：一个人笑得最响的时候，往往是想盖住什么。）');
+
+CH_3('群里还在刷屏，他还在笑。', [
+  ['在群里发一句「名字而已，谁没被坑过」，把话题带走', 2, 'c6_a'],
+  ['跟着笑一句，把气氛续上', 1, 'c6_b'],
+  ['私下给他发一条:「要不要我帮你写改名申请。」', 2, 'c6_c']
+]);
+
+LB('c6_a');
+
+S('xtbt','calm','名字而已。谁没被坑过。');
+S('xtbt','calm','我六年级的号叫「我是傻逼别点我」。');
+S('xj',null,'哈哈哈哈哈哈。');
+S('xl',null,'这个更狠。');
+S('xw',null,'新来的怎么黑历史也这么多。');
+N('群里的注意力很快就转走了。');
+N('有人开始挨个晒自己难看的旧 ID，一个比一个离谱。');
+N('十分钟以后，没人再提 absyyyy121。');
+N('XTBT 回过头的时候，mzt 已经不笑了。');
+N('他盯着屏幕，手指停在键盘上，一动不动。');
+N('过了一会儿，他很小声地说了一句。');
+S('mzt','calm','……你那句话是假的吧。');
+S('xtbt','calm','真的。我六年级的号就叫这个。');
+S('mzt','calm','……');
+S('mzt','calm','哦。');
+N('他重新开始敲键盘。那天下午他一句话都没再说。');
+I('xtbt','calm','（我六年级那个号，是真的。）');
+I('xtbt','calm','（但我今天说它出来，是为了别的事。）');
+GO('c6_end');
+
+LB('c6_b');
+Ex('mzt','laugh');
+S('xtbt','calm','absyyyy121！');
+S('mzt','laugh','对！你爸爸我这是艺名！');
+N('两个人一起笑了。群里刷了一屏表情。');
+N('XTBT 笑到一半，眼角瞥见 mzt 的手。');
+N('他一只手在敲键盘，另一只手攥着裤腿。');
+N('攥得很紧。');
+N('那天下午他照常讲题，照常骂人，照常吃泡面。');
+N('只是晚上熄灯以后，XTBT 醒了一次。');
+N('上铺是空的。键盘声从走廊那头传过来。');
+I('xtbt','calm','（我那天跟着笑了。）');
+I('xtbt','calm','（这件事我记了很长时间。）');
+GO('c6_end');
+
+LB('c6_c');
+Ex('mzt','surprise');
+N('XTBT 打开洛谷，给他发了条私信。');
+N('「改名要七天。要不要我帮你写申请。」');
+N('已读。没有回复。');
+N('过了大概四十分钟，对面回了一条。');
+N('「不改。」');
+N('「留着。」');
+N('XTBT 盯着这两个字看了半天。');
+S('xtbt','calm','为什么留着。');
+S('mzt','calm','提醒我。');
+S('xtbt','calm','提醒什么。');
+S('mzt','calm','提醒我别信人。');
+N('XTBT 打完一句话又删掉了。他最后只发了三个字。');
+S('xtbt','calm','那我呢。');
+N('对面过了十分钟才回。');
+S('mzt','calm','你还没骗过我。');
+S('mzt','calm','还有七天。');
+I('xtbt','calm','（他说还有七天。）');
+I('xtbt','calm','（我到现在都不知道，他那天是在数什么。）');
+GO('c6_end');
+
+LB('c6_end');
+BG('machine_room_night'); FX(null);
+N('那天晚上十二点，三层那间机房还亮着灯。');
+N('XTBT 忘了拿水杯，从宿舍绕回教学楼。');
+N('他在二层楼梯口停了一下，然后上了楼。');
+N('三层那间屋里只亮着一台显示器的光。');
+N('mzt 坐在靠窗那张桌子上，屏幕上是他的洛谷主页。');
+N('光标停在昵称那一栏，一直在闪。');
+N('他没有点进去，也没有退出。');
+N('就那么坐着。');
+N('XTBT 在门口站了很久，最后没有出声，退回去，把门带上。');
+I('xtbt','calm','（他不是不在意。）');
+I('xtbt','calm','（他是在意得要命，还要笑着给别人看。）');
+
+/* ==================================================== 第六章 · 追不上的人 */
+BG('machine_room'); FX(null);
+CHAP('第六章','追不上的人');
+HIDE('xtbt'); HIDE('mzt');
+N('九月开学，集训结束，各自回各自的学校。');
+N('XTBT 回到自己的机房——教学楼二层，走廊尽头那间屋子。');
+N('开学第一周，他收到了 mzt 的洛谷私信。');
+N('一个压缩包：对拍数据 8 月 25 日。');
+N('第二周：9 月 1 日。');
+N('第三周：9 月 8 日。');
+N('每一周都有，一次没断过。');
+N('XTBT 从初二的机房里，靠这些压缩包知道自己该练什么。');
+N('他把每一个压缩包都存着，起名叫「大麦子快递」。');
+N('十一月，他第一次拿到了校级选拔的第一名。');
+N('他给 mzt 发消息：我第一了。');
+N('对面秒回：几个题。');
+N('XTBT：三个。第四题挂了。');
+N('对面：包子。');
+N('对面：三个题第一，也配吹。');
+N('XTBT 笑了半天。');
+BG('machine_room_night'); FX(null);
+N('第二年春天，mzt 去了省城集训。');
+N('消息变成了三天一条，后来变成一周一条。');
+N('压缩包还在。');
+N('附言只有两句：「这周的重点。」「做不完别睡。」');
+N('XTBT 在四月的某一天，把一整周的题做完了。');
+N('他给对面发消息：我做完了。');
+N('等了六个小时。');
+N('对面回了一句：嗯。');
+N('下面跟着一条，是凌晨两点发的。');
+N('「你爸爸我这周死在第四题上。」');
+N('「我回来了跟你打蔚蓝。」');
+I('xtbt','calm','（他把我送去练的是压缩包。）');
+I('xtbt','calm','（他自己留在省城的，是第四题。）');
+I('xtbt','calm','（他从来没跟我说过他挂在哪里。）');
+BG('dorm'); FX(null);
+N('初二下学期结束，XTBT 去了一趟省城。');
+N('他坐了四个小时的车，在集训队门口等了两个小时。');
+N('mzt 出来的时候背着电脑包，头发还是翘着一撮，人瘦了一圈。');
+SHOW('mzt','right','calm'); SHOW('xtbt','left','calm');
+S('xtbt','calm','我来看你。');
+S('mzt','calm','谁让你来的。');
+S('xtbt','calm','没人。');
+S('mzt','calm','……');
+S('mzt','calm','包子。');
+S('mzt','calm','你那道省选模拟题，我看了。');
+S('xtbt','calm','哪一道。');
+S('mzt','calm','你自己知道是哪一道。');
+S('mzt','calm','你写挂了。');
+S('xtbt','calm','……我在车上写的。');
+S('mzt','calm','我看出来了。');
+S('mzt','calm','你写代码的样子我太熟了。');
+N('他把电脑包放到地上，蹲下来拉开拉链，翻出一袋面包，扔给 XTBT。');
+S('mzt','calm','吃。');
+S('xtbt','calm','你哪来的。');
+S('mzt','smug','顺手的。');
+S('mzt','smug','不吃我扔了。');
+N('两个人蹲在集训队门口的台阶上，一人一半，就着矿泉水吃完了。');
+N('太阳很好，车来车往。');
+S('mzt','calm','我可能要去省城读高中。');
+S('xtbt','calm','……');
+S('mzt','calm','那边的队强。');
+S('xtbt','calm','嗯。');
+S('mzt','calm','我们学校给我名额了。');
+S('xtbt','calm','……嗯。');
+N('XTBT 嚼着面包，没有说话。');
+N('他那时候还不知道，接下来两个小时里他会说出一句让两个人都后悔半年的话。');
+
+/* ==================================================== 第七章 · 你不是神 */
+BG('machine_room_night'); FX(null);
+CHAP('第七章','你不是神');
+HIDE('xtbt'); HIDE('mzt');
+SHOW('mzt','right','calm'); SHOW('xtbt','left','calm');
+N('台阶上的面包吃完了。');
+N('XTBT 把塑料袋团起来，攥在手里。');
+N('他想说的话很多，最后说出来的是一句最糟的。');
+S('xtbt','calm','你不是神。');
+N('mzt 转过头看他。');
+S('xtbt','calm','你走了，也一样。');
+S('xtbt','calm','省城那边有的是比你强的人。');
+S('xtbt','calm','你去了也未必是第一。');
+N('这句话说出口的瞬间，XTBT 自己就知道错了。');
+N('可是话已经出去了。');
+N('mzt 没有骂他。');
+N('mzt 看着他，看了大概五秒钟。');
+N('然后他站起来，把电脑包背到肩上。');
+S('mzt','calm','嗯。');
+S('mzt','calm','你说得对。');
+N('他走了。');
+N('他没有回头，也没有骂包子。');
+N('那是 XTBT 认识他以来，第一次听见他用这么平的语气说话。');
+
+CH_3('他走到路口，只剩下背影。', [
+  ['追上去，当场把话收回来', 2, 'c7_a'],
+  ['原地站着。既然说出去了，就撑着', 1, 'c7_b'],
+  ['回学校以后写一条很长的消息发给他', 2, 'c7_c']
+]);
+
+LB('c7_a');
+Ex('mzt','surprise');
+N('XTBT 追了上去，在路口把他拉住。');
+S('xtbt','calm','我收回。');
+S('mzt','surprise','……');
+S('xtbt','calm','我不是那个意思。');
+S('xtbt','calm','我是怕。');
+S('xtbt','calm','我怕你去了那边，我就不认识你了。');
+N('mzt 把他的手甩开。');
+S('mzt','calm','你怕就说你怕。');
+S('mzt','calm','你说我干什么。');
+N('他往前走了两步，又停下。');
+S('mzt','calm','包子。');
+S('mzt','calm','你刚才那句话，是这半年里最像人话的一句。');
+S('xtbt','calm','……哪一句。');
+S('mzt','calm','「我怕」。');
+S('mzt','calm','后面那两句，你收回去。');
+N('他挥了挥手，拦了一辆车。');
+N('XTBT 站在路口，看着车拐过弯不见了。');
+N('那天晚上他给 mzt 发消息，对面一条都没回。');
+N('第二天，第三天，也都没有。');
+I('xtbt','calm','（我以为我们完了。）');
+I('xtbt','calm','（后来的十三周里，他每周照旧给我发压缩包。）');
+GO('c7_end');
+
+LB('c7_b');
+Ex('mzt','calm');
+N('XTBT 站在原地，没有追。');
+N('他跟自己说：我又没说错，他本来就不是神。');
+N('他回到自己的城市，开学，做题，考试。');
+N('日子过得很快。');
+N('九月底，他忽然想给他发消息，打开对话框，又关掉了。');
+N('十月中，他做完了一整套省选模拟题，想截图给他看，又关掉了。');
+N('十一月，他在洛谷上看见 mzt 的动态：还在榜上，很靠前。');
+N('他想点个赞。他最后没有点。');
+I('xtbt','calm','（我那时候天天告诉自己：等他自己来找我。）');
+I('xtbt','calm','（其实我是在等奖品。）');
+I('xtbt','calm','（这件事想起来，我到现在都难受。）');
+GO('c7_end');
+
+LB('c7_c');
+Ex('mzt','calm');
+N('回到学校的那天晚上，XTBT 写了很长一条消息。');
+N('他写了三遍。第一遍两千字，第二遍八百字，第三遍删到只剩两句话。');
+N('「我今天说的第一句是气话。」');
+N('「第二句是真心话。」');
+N('他按了发送。');
+N('一分钟后，他补了一条。');
+N('「真心话的意思是，我舍不得。」');
+N('已读。');
+N('没有回复。');
+N('那条消息一直挂在那里，挂了一整个夏天。');
+I('xtbt','calm','（他从来不删聊天记录。）');
+I('xtbt','calm','（所以我知道，他一定看见了。）');
+GO('c7_end');
+
+LB('c7_end');
+BG('machine_room_night'); FX(null);
+N('整个初三上学期，两个人一个字都没有说过。');
+N('XTBT 的机房搬回了教学楼二层，桌面上是他自己的三十道题。');
+N('他每天坐到十点半。');
+N('回来打开电脑，进那个文件夹。');
+N('「大麦子快递」。');
+N('战争开始以后的第一个星期，里面多了一个压缩包。');
+N('第二个星期，又多了两个。');
+N('十三个星期过去，文件夹里躺着二十八个压缩包。');
+N('每一个都有日期，每一个都是对拍数据外加两道题。');
+N('没有一句话。');
+N('XTBT 一个都没删。');
+I('xtbt','calm','（他嘴上不说，一天都没停。）');
+I('xtbt','calm','（他把我送去练的是这个东西。）');
+
+/* ==================================================== 第八章 · 谁先低头 */
+BG('dorm_night'); FX(null);
+CHAP('第八章','谁先低头');
+HIDE('xtbt'); HIDE('mzt');
+N('寒假前的最后一个晚上，XTBT 打蔚蓝。');
+N('他卡在第七章。');
+N('他死了三百多次，屏幕上那座山还是停在那儿不动。');
+N('凌晨一点，他打开洛谷，给一个十三周没说话的账号发了一条消息。');
+N('「压缩包我收到了。」');
+N('「二十八个。」');
+N('他关机睡觉。');
+N('第二天中午，他醒来，看见一条回复。');
+N('「哦。」');
+N('下面跟了一条。');
+N('「我卡在第七章。」');
+N('XTBT 坐起来，把手机举到眼前。');
+N('「蔚蓝第七章。」');
+N('「上不去。」');
+
+CH_3('手机上那行字还在闪。', [
+  ['立刻回：「那我们一起上。」', 2, 'c8_a'],
+  ['先回一句「我昨天也卡在第七章」，把话递过去', 2, 'c8_b'],
+  ['不回。等他再说一句', 1, 'c8_c']
+]);
+
+LB('c8_a');
+Ex('mzt','surprise');
+S('xtbt','calm','那我们一起上。');
+N('对面回得很快。');
+S('mzt','surprise','……什么叫一起。');
+S('xtbt','calm','你在省城，我在我家。');
+S('xtbt','calm','开着屏幕，一起死。');
+N('对面十分钟没说话。');
+N('然后发来一个房间号。');
+N('那天下午，两个人同一时间打开了那座山。');
+N('XTBT 死了四百一十次，过了。');
+N('mzt 死了一百多次，也过了。');
+N('通关的时候，屏幕上是两个人在山顶上站着。');
+N('语音里很安静。');
+N('过了一会儿，对面说了一句。');
+S('mzt','calm','包子。');
+S('xtbt','calm','嗯。');
+S('mzt','calm','你那句话我早忘了。');
+S('xtbt','calm','……你刚才还说你在第七章。');
+S('mzt','calm','闭嘴。');
+I('xtbt','smile','（他根本没忘。）');
+I('xtbt','smile','（他只是想找个理由先开麦。）');
+GO('c8_end');
+
+LB('c8_b');
+Ex('mzt','calm');
+S('xtbt','calm','我昨天也卡在第七章。');
+S('xtbt','calm','死了三百多次。');
+N('对面过了一会儿才回。');
+S('mzt','calm','三百多次。');
+S('mzt','calm','你知道我第一次上这座山死了多少吗。');
+S('xtbt','calm','你说过，一百八十。');
+S('mzt','calm','……');
+S('mzt','calm','你记这个干什么。');
+S('xtbt','calm','因为你只说过一次。');
+N('对面很久没有回复。');
+N('过了两个小时，他发来一句。');
+S('mzt','calm','周六下午三点。');
+S('mzt','calm','一起爬。');
+S('mzt','calm','别迟到，包子。');
+I('xtbt','calm','（他这个人，只有骂人和约时间这两件事说得最干脆。）');
+I('xtbt','calm','（我知道，这就是他的道歉。）');
+GO('c8_end');
+
+LB('c8_c');
+Ex('mzt','calm');
+N('XTBT 把手机放在桌上，去写题了。');
+N('他心里有一点点赌气。');
+N('傍晚的时候，手机又响了。');
+S('mzt','calm','喂。');
+S('mzt','calm','你死了？');
+N('XTBT 看着这三条消息，笑了一声，把手机拿起来。');
+S('xtbt','calm','没死。');
+S('xtbt','calm','第七章我过了。');
+S('mzt','calm','……');
+S('mzt','calm','那你教我。');
+N('XTBT 又笑了一声。');
+S('xtbt','calm','周六下午三点，房间号发我。');
+S('mzt','calm','你倒是会挑时间。');
+S('xtbt','calm','你以前也这样。');
+S('mzt','calm','……包子。');
+S('mzt','calm','你爸爸我这就去练。');
+I('xtbt','calm','（我们谁都没有先道歉。）');
+I('xtbt','calm','（但周六下午三点，两个人在山顶上站着。）');
+GO('c8_end');
+
+LB('c8_end');
+BG('machine_room'); FX(null);
+N('那年六月，XTBT 中考。');
+N('考完的那天下午，他走出考场，手机上有三条消息。');
+N('第一条：「考得怎么样。」');
+N('第二条：「别跟我说数学考砸了。」');
+N('第三条：「你要是没考好，我下周回去揍你。」');
+N('XTBT 站在校门口笑了一下，回了两个字：还行。');
+N('成绩出来那天，他的分数能上本校高中部。');
+N('他填了本校。');
+N('有人问他为什么不去更好的学校。');
+N('他说：机房近。');
+I('xtbt','calm','（机房近是实话。）');
+I('xtbt','calm','（但我留在本校，是因为那边有一个一直坐在第一行的人。）');
+I('xtbt','calm','（他高一，我初三。我差他一年。）');
+I('xtbt','calm','（我想追到那一年里去。）');
+
+/* ==================================================== 第九章 · 两条线 */
+BG('machine_room_night'); FX(null);
+CHAP('第九章','两条线');
+HIDE('xtbt'); HIDE('mzt');
+N('高一那年的十月，XTBT 在洛谷上收到了一个系统提示。');
+N('「您关注的人修改了昵称。」');
+N('他点开那个熟悉的主页。');
+PROF('mzt','v2');
+N('昵称那一栏，不再是 absyyyy121。');
+N('是 Minzitong2026。');
+CARDX();
+N('签名还是那句系统默认的话，一个字都没改。');
+N('成就还是 0（未认证）。');
+N('XTBT 盯着主页看了很久。');
+I('xtbt','calm','（他改了。）');
+I('xtbt','calm','（那个被人在群里笑过两轮的名字，他自己改回去了。）');
+I('xtbt','calm','（他没跟我说，也没发动态。）');
+N('他给对面发了三个字。');
+S('xtbt','calm','改回来了。');
+N('对面回得很快。');
+S('mzt','calm','嗯。');
+S('mzt','calm','七天早就过了。');
+S('mzt','calm','只是以前懒得弄。');
+S('xtbt','calm','为什么现在弄。');
+N('对面过了一会儿才回。');
+S('mzt','calm','有人跟我说，我留着这个名字是在罚自己。');
+S('mzt','calm','我想了想，好像也对。');
+N('XTBT 看着这条消息，忽然笑出声。');
+S('xtbt','calm','那你签名怎么不改。');
+S('mzt','calm','不改。');
+S('xtbt','calm','为什么？');
+S('mzt','calm','神不在乎。');
+N('那一年他高一，XTBT 初三刚毕业。两个人中间隔着三百公里。');
+N('压缩包还在发。文件夹里的名字，从「大麦子快递」改成了「麦子快递」。');
+N('XTBT 一直没有改回去。');
+BG('machine_room'); FX(null);
+N('从高一到高二，两个人靠三样东西维持着联系。');
+N('榜单、压缩包，和每周六下午三点的蔚蓝房间。');
+N('周六下午三点成了他们之间唯一稳定的东西。');
+N('有一次 XTBT 迟到了二十分钟，进门的时候，语音里一句话都没有。');
+N('他以为对面生气了。');
+N('十分钟以后，屏幕上那座山上出现了一个小人，一直在原地跳。');
+N('跳了二十分钟，等他。');
+N('XTBT 那天什么也没说，只是坐下来，也跳了上去。');
+I('xtbt','calm','（他从不催我。）');
+I('xtbt','calm','（他就站在那儿跳。一直跳。）');
+
+/* ============================== 第九章（续）· 周六下午三点 */
+BG('machine_room_night'); FX(null);
+N('那个周六，XTBT 迟到了二十分钟。');
+N('他推门进去的时候，语音里没有人说话。');
+N('屏幕上那座山上，一个小人在原地跳。');
+N('一下，两下，一百下。');
+N('他站在那儿等。');
+SHOW('xtbt','left','shy'); SHOW('mzt','right','calm');
+I('xtbt','calm','（他等了二十分钟。）');
+I('xtbt','calm','（一句话都没催。）');
+
+CH_3('那个小人还在原地跳。', [
+  ['先说一句「对不起，我来晚了」', 2, 'c9_a'],
+  ['什么也不说，直接跳上去陪他', 2, 'c9_b'],
+  ['问他：「你是不是一直在等我。」', 1, 'c9_c']
+]);
+
+LB('c9_a');
+Ex('mzt','calm');
+S('xtbt','calm','对不起，我来晚了。');
+N('屏幕上那个小人停了一下。');
+S('mzt','calm','知道就好。');
+S('mzt','calm','包子。');
+S('xtbt','calm','嗯。');
+S('mzt','calm','你爸爸我等你，是我自己愿意。');
+S('mzt','calm','你不欠我什么。');
+N('他说完就往下跳了，一次跳进悬崖。');
+N('屏幕上冒出新的死亡计数。');
+S('mzt','smug','跟着。');
+S('mzt','smug','别废话。');
+I('xtbt','calm','（他这句话，我记到了现在。）');
+I('xtbt','calm','（「是我自己愿意」。）');
+GO('c9_end');
+
+LB('c9_b');
+Ex('mzt','smug');
+N('XTBT 什么也没说，直接跳了上去。');
+N('两个小人在同一块石头上站着。');
+N('山风把他们的头发吹起来，屏幕之外谁也不说话。');
+N('过了一会儿，对面开口了。');
+S('mzt','calm','你迟到了。');
+S('xtbt','calm','嗯。');
+S('mzt','calm','我没生气。');
+S('mzt','calm','我只是有点怕。');
+S('xtbt','calm','怕什么。');
+S('mzt','calm','怕你以后不来了。');
+N('XTBT 的手指停在键盘上。');
+S('xtbt','calm','我会来。');
+S('mzt','calm','嗯。');
+S('mzt','calm','那就爬。');
+N('那天他们爬到凌晨两点，谁也没提刚才那句话。');
+I('xtbt','calm','（他说怕。）');
+I('xtbt','calm','（他说这两个字的时候，声音低得几乎听不见。）');
+GO('c9_end');
+
+LB('c9_c');
+Ex('mzt','surprise');
+S('xtbt','calm','你是不是一直在等我。');
+N('对面沉默了一下。');
+S('mzt','surprise','谁等你。');
+S('xtbt','calm','你在原地跳了二十分钟。');
+S('mzt','surprise','……');
+S('mzt','surprise','我在热身。');
+S('xtbt','calm','热身要跳二十分钟？');
+S('mzt','surprise','神的热身你不懂。');
+N('他说完这句就往下跳了，跳下去摔死。');
+N('然后又爬上来，站回XTBT 旁边。')
+S('mzt','calm','行了。');
+S('mzt','calm','你来了就爬。');
+I('xtbt','smile','（他否认了。）');
+I('xtbt','smile','（但他摔死两次才爬回来，就为了站回我旁边。）');
+GO('c9_end');
+
+LB('c9_end');
+BG('machine_room'); FX(null);
+N('高二那年冬天，XTBT 在联赛的联合榜单上，又一次看见那两行名字挨在一起。');
+RANKS([['小L','402'],['mzt','388'],['xtbt','385'],['小Q','360'],['wzqh','350']],
+  '跨校联合榜：mzt 第 2，XTBT 第 3，差 3 分。');
+CARDX();
+N('XTBT 盯着那两行看了很久。');
+N('他在本校，mzt 在省城。两个人参加的根本不是同一场练习。');
+N('可是这两年，只要两个人都在榜上，名次永远挨着。');
+N('而且永远是他上面。');
+N('差一分，差两分，差三分。');
+N('一次都没有例外。');
+SHOW('xtbt','left','surprise');
+S('xtbt','calm','whr。');
+S('whr',null,'干嘛。');
+S('xtbt','calm','你们初三那会儿，他是不是也这样。');
+S('whr',null,'哪样。');
+S('xtbt','calm','就那个。榜上死死卡在我上面。');
+N('whr 在语音那头笑了一声。');
+S('whr',null,'你现在才发现？');
+S('xtbt','calm','……什么意思。');
+S('whr',null,'我们那会儿都看出来了。');
+S('whr',null,'他一周就来两次机房，其他时间在宿舍打游戏。');
+S('whr',null,'你以为他分哪来的。');
+S('whr',null,'他是看着你的分，算好了再交的。');
+S('xtbt','calm','……为什么。');
+S('whr',null,'你想想你什么时候看榜。');
+N('XTBT 没说话。');
+S('whr',null,'你每次打开榜单，从上往下看。');
+S('whr',null,'第一眼看到的是谁的名字？');
+N('XTBT 握着手机，坐在那儿一动不动。');
+I('xtbt','calm','（第一眼看到的是他。）');
+I('xtbt','calm','（三年，每一次，都是他。）');
+I('xtbt','calm','（我从来没想过这是为什么。）');
+I('xtbt','calm','（现在我知道了。）');
+
+/* ==================================================== 第十章 · 主榜与副榜 */
+BG('machine_room_night'); FX(null);
+CHAP('第十章','主榜与副榜');
+HIDE('xtbt'); HIDE('mzt');
+N('高三那年春天，mzt 进了省队。');
+N('名单是晚上八点出的。XTBT 在机房刷了半个小时，刷出来的。');
+N('他给对面发了三个字：看到啦。');
+N('对面回：嗯。');
+N('过了十分钟，又发来一条。');
+N('「我妈不让我去了。」');
+N('XTBT 盯着这句话，愣了很久。');
+N('省队集训是三个月，脱产。集训队的成绩单会寄回家。');
+N('mzt 的家里一直是那种态度：竞赛可以搞，高考不能丢。');
+N('这一次不一样。这一次是两个月的课，是一次模考的排名，是一整年的赌。');
+N('第二天他打来电话，声音很平。');
+S('mzt','calm','我妈说，我要是去，她就去医院。');
+S('xtbt','calm','……她是吓唬你的吧。');
+S('mzt','calm','不是。');
+S('mzt','calm','她去年犯过一次心梗。');
+S('mzt','calm','我查过，那几天她的药在减量。');
+N('XTBT 握着手机，手心在出汗。');
+S('mzt','calm','包子。');
+S('mzt','calm','你说我去不去。');
+N('这是他第一次问 XTBT 的意见。');
+N('电话那头很安静，能听见他家风扇的声音。');
+
+CH_3('他在等你说话。', [
+  ['「我已经买了去你家的票。这事我陪你说。」', 2, 'c10_a'],
+  ['「你自己决定。你选哪个我都认。」', 1, 'c10_b'],
+  ['「你去打。她那边我陪你一起想办法。」', 2, 'c10_c']
+]);
+
+LB('c10_a');
+Ex('mzt','surprise');
+S('xtbt','calm','我已经买了去你家的票。');
+S('mzt','surprise','你什么？');
+S('xtbt','calm','明天下午到。这事我陪你说。');
+S('mzt','surprise','你疯了吧。');
+S('mzt','surprise','我们俩加起来十八岁。你能说什么。');
+S('xtbt','calm','我也不说大道理。');
+S('xtbt','calm','我就跟阿姨说一件事。');
+S('xtbt','calm','我初一那会儿，题都是他给我选的。');
+S('xtbt','calm','两年来一周一个压缩包，一次没断过。');
+S('xtbt','calm','我说他不是为了自己才去省城。');
+N('电话那头沉默了很久。');
+S('mzt','calm','……包子。');
+S('mzt','calm','你是不是有病。');
+S('xtbt','calm','有。');
+S('mzt','calm','……');
+S('mzt','calm','明天我去车站接你。');
+N('第二天他去了。在客厅里，对着 mzt 他妈，把话说得很慢，也很难听。');
+N('最后 mzt 去了省队。');
+N('他妈在门口给他塞了一袋药，说：有事打电话。');
+I('xtbt','calm','（那天晚上他送我回站台。）');
+I('xtbt','calm','（他什么也没说，就是一直走在我前面半步。）');
+GO('c10_end');
+
+LB('c10_b');
+Ex('mzt','calm');
+S('xtbt','calm','你自己决定。你选哪个我都认。');
+N('电话那头安静了几秒。');
+S('mzt','calm','你爸爸我最讨厌你这句。');
+S('xtbt','calm','……');
+S('mzt','calm','「选哪个我都认」。');
+S('mzt','calm','那你呢。你想要哪个。');
+N('XTBT 张了张嘴，说不出来。');
+S('mzt','calm','算了。');
+S('mzt','calm','我问错人了。');
+N('电话挂断的时候，XTBT 站在机房的窗口，看着外面黑乎乎的操场。');
+N('那天晚上他给对面发了一条消息。');
+N('「我想让你去。」');
+N('「但我怕你去了以后,一切都变了。」');
+N('对面第二天早上回了一句。');
+N('「那就变。」');
+N('「你别站在原地就行。」');
+N('三天以后，mzt 去了省队集训。');
+I('xtbt','calm','（他那天问我，我什么都没说。）');
+I('xtbt','calm','（我不是没有想法。）');
+I('xtbt','calm','（我是怕说错了。）');
+I('xtbt','calm','（……我后来才知道，「怕说错」和「什么都没说」，是一回事。）');
+GO('c10_end');
+
+LB('c10_c');
+Ex('mzt','calm');
+S('xtbt','calm','你去打。她那边我陪你一起想办法。');
+S('mzt','calm','怎么想。');
+S('xtbt','calm','第一，集训队每个月有成绩单，让她知道你在干什么。');
+S('xtbt','calm','第二，你每天给她打个电话，五分钟就行。');
+S('xtbt','calm','第三，我去你家一趟。');
+S('mzt','calm','你去干什么。');
+S('xtbt','calm','我不说。');
+S('xtbt','calm','我就是去让她看看，她儿子在外面到底带了什么人回来。');
+N('电话那头笑了一声，很短。');
+S('mzt','smug','包子，你这话说得挺狂的。');
+S('xtbt','calm','跟你学的。');
+N('那天以后，他做了这三件事。');
+N('一个月以后，mzt 打来电话，说他妈在电话里哭了，但是同意的。');
+N('他说这句话的时候，声音有点抖。');
+I('xtbt','calm','（他哭了没有我不知道。）');
+I('xtbt','calm','（反正我听见他很久没说话。）');
+GO('c10_end');
+
+LB('c10_end');
+BG('contest'); FX(null);
+N('那年夏天，mzt 在国赛拿了金牌，进了集训队。');
+N('XTBT 在机房看直播，看到最后三分钟，手一直在抖。');
+N('出成绩那天，他收到一条消息，是六个字。');
+N('「包子，你爸爸我是神。」');
+N('XTBT 笑了很久，然后回了两个字：知道。');
+N('他想了想，又补了一句。');
+N('「我从初一就知道了。」');
+
+/* ==================================================== 第十一章 · 别叫我爸爸 */
+BG('dorm_night'); FX(null);
+CHAP('第十一章','别叫我爸爸');
+HIDE('xtbt'); HIDE('mzt');
+N('高三的暑假，mzt 回了一趟家，又坐了两个小时的车过来。');
+N('他在 XTBT 家楼下那家面馆里等了一个小时。');
+SHOW('mzt','right','smug'); SHOW('xtbt','left','calm');
+S('mzt','smug','包子，你这么慢。');
+S('xtbt','calm','你突然回来，我总得洗个脸。');
+S('mzt','smug','你这张脸洗不洗都一样。');
+N('两个人吃了两碗面。他吃得很慢，一直在用筷子戳碗里的葱花。');
+N('XTBT 从没见过他这么吃东西。');
+S('xtbt','calm','你怎么了。');
+S('mzt','calm','没事。');
+S('mzt','calm','我明天去学校报到。');
+S('xtbt','calm','保送的？');
+S('mzt','calm','嗯。');
+S('xtbt','calm','恭喜。');
+S('mzt','calm','……');
+N('他把筷子放下了。');
+N('面馆的电视在放天气预报，外面在下雨，桌上那碗面还剩一半。');
+S('mzt','calm','包子。');
+S('xtbt','calm','嗯。');
+S('mzt','calm','我问你个事。');
+S('xtbt','calm','你说。');
+S('mzt','calm','你这三年，每周六下午三点，是不是都留着的。');
+N('XTBT 愣了一下。');
+S('xtbt','calm','……你怎么知道。');
+S('mzt','calm','因为我也是。');
+N('他抬头看了 XTBT 一眼，又低下去，戳那半碗面。');
+S('mzt','calm','我以前跟你说过一句话。');
+S('mzt','calm','我说，我是你爸爸。');
+S('xtbt','calm','……嗯。');
+S('mzt','calm','你别叫了。');
+N('XTBT 没反应过来。');
+S('xtbt','calm','什么？');
+S('mzt','calm','以后别叫了。');
+S('mzt','calm','我说「你爸爸我」这个说法，你也别接了。');
+N('XTBT 看着他。他低着头，耳朵是红的，手指一直在戳那碗面。');
+N('XTBT 忽然明白了什么，心跳得很快。');
+I('xtbt','calm','（他在说什么。）');
+I('xtbt','calm','（他这句话，绕了三年。）');
+
+CH_3('他还在低头戳那碗面。', [
+  ['把话挑明：「那我叫你什么。」', 3, 'c11_a'],
+  ['接着说「为什么」，逼他自己讲完', 2, 'c11_b'],
+  ['装作没听懂，把话岔开', 0, 'c11_c']
+]);
+
+LB('c11_a');
+Ex('mzt','surprise');
+S('xtbt','calm','那我叫你什么。');
+N('mzt 抬头。');
+S('mzt','surprise','……');
+S('mzt','calm','随便。');
+S('xtbt','calm','叫麦子？');
+S('mzt','calm','不行。');
+S('xtbt','calm','叫 mzt？');
+S('mzt','calm','那是 ID。');
+S('xtbt','calm','那叫什么。');
+N('他把筷子往碗里一插，声音有点哑。');
+S('mzt','calm','你能不能自己想。');
+N('XTBT 看着他。');
+N('然后他伸出手，把 mzt 的手腕抓住了。');
+N('mzt 的手腕很细，凉。');
+S('xtbt','calm','我不想了。');
+S('xtbt','calm','我等你说了三年，你自己说。');
+N('面馆里很安静。电视还在放天气预报，说今夜有雨。');
+S('mzt','calm','……');
+S('mzt','calm','我喜欢你。');
+N('他说完就把手抽回去了，抓起筷子，低头吃那半碗已经坨了的面。');
+S('mzt','calm','吃面。');
+S('mzt','calm','别看着我，吃面。');
+N('XTBT 没有吃面。他就那么看着他，笑了出来。');
+I('xtbt','smile','（他手在抖。）');
+I('xtbt','smile','（他把筷子抓反了都不知道。）');
+GO('c11_end');
+
+LB('c11_b');
+Ex('mzt','calm');
+S('xtbt','calm','为什么。');
+N('mzt 沉默了很久。');
+S('mzt','calm','因为你叫了三年。');
+S('mzt','calm','我每次听见，都觉得你还站在初一那个晚上。');
+S('mzt','calm','站在我上铺下面抬头看我。');
+S('mzt','calm','我不想让你一直站在那儿。');
+S('xtbt','calm','那你想让我站哪儿。');
+N('mzt 抬起头，看着他。');
+N('他看了大概三秒钟，然后把话说了出来。');
+S('mzt','calm','我想让你站在我旁边。');
+N('他说完就后悔了，抓起碗喝汤，呛了一下。');
+S('mzt','calm','……我操。');
+S('mzt','calm','说顺嘴了。');
+N('XTBT 伸过手，把他的碗按住。');
+S('xtbt','calm','说都说了。');
+S('xtbt','calm','不允许你收回去。');
+I('xtbt','calm','（他那天晚上呛了三次。）');
+I('xtbt','calm','（他说的话我都记着。）');
+GO('c11_end');
+
+LB('c11_c');
+Ex('mzt','calm');
+S('xtbt','calm','哦，行。那以后叫你「喂」。');
+N('mzt 愣了一下。');
+S('mzt','calm','……喂？');
+S('xtbt','calm','嗯，喂。挺好。');
+N('他低头吃面。');
+N('mzt 坐在对面，看着他吃了很久。');
+S('mzt','calm','包子。');
+S('xtbt','calm','嗯。');
+S('mzt','calm','你是装傻还是真傻。');
+S('xtbt','calm','你说什么？');
+N('mzt 站起来，把面钱拍在桌上，走了。');
+N('XTBT 听见他在门口站了两秒，然后又走回来。');
+S('mzt','calm','你明天早上八点，车站。');
+S('xtbt','calm','干什么。');
+S('mzt','calm','我再说一遍。');
+S('mzt','calm','这次说清楚，你别插嘴。');
+N('第二天早上，他在车站把同一句话说了一遍。');
+N('说完就上车了，把脸贴在车窗上，一路都没转过来。');
+SET('late',1);
+GO('c11_end');
+
+LB('c11_end');
+BG('dorm_night'); FX(null);
+N('那天晚上下了很大的雨。');
+N('两个人挤在 XTBT 家那把伞底下，从面馆走回去，一路上谁都没说话。');
+N('伞很小。XTBT 的肩膀是湿的，mzt 那边也是湿的。');
+N('走到小区门口，mzt 站住了。');
+S('mzt','calm','包子。');
+S('xtbt','calm','嗯。');
+S('mzt','calm','我今天说的话，你别跟别人说。');
+S('xtbt','calm','为什么。');
+S('mzt','calm','因为我是神。神有形象。');
+N('XTBT 笑了一下，转过头看他。');
+N('然后他抓住了 mzt 的手。');
+N('mzt 的手很凉，抖了一下，没有抽回去。');
+N('两个人就那么站在雨里，握着。');
+N('过了很久，mzt 说了一句。');
+S('mzt','calm','……你手怎么这么热。');
+S('xtbt','calm','我紧张。');
+S('mzt','calm','……');
+S('mzt','calm','我比你还紧张。');
+N('那天是他们认识以来，第一次牵手。');
+N('雨一直下到后半夜。');
+
+/* ==================================================== 第十二章 · 一路到毕业 */
+BG('machine_room'); FX(null);
+CHAP('第十二章','一路到毕业');
+HIDE('xtbt'); HIDE('mzt');
+N('高三那一年，XTBT 过得像一台机器。');
+N('周一到周六上课，周日模拟考。机房里他给自己留了一个位置，一周去两次。');
+N('mzt 在另一个城市的大学里，每周六下午三点，雷打不动地在山脚下等他。');
+N('XTBT 有时候只爬十分钟，就要回去写卷子。');
+N('mzt 从来不催。他就站在原地跳。');
+N('那一年的压缩包没有停。');
+N('只是内容变了：从对拍数据，变成了他自己整理的错题本。');
+N('每一份后面都写着一句话。');
+N('「这是我的，你别学。你学你自己的。」');
+N('「这题我挂过。看第三行。」');
+N('「看完去睡觉。别熬夜。」');
+N('最后一句后面跟了个括号。');
+N('「（神的建议。）」');
+I('xtbt','calm','（他大一的课表比我还满。）');
+I('xtbt','calm','（他每周还要给我写这个。）');
+
+CH_3('高三这一年，他问你要不要他回来。', [
+  ['「别回来。你在那边好好读你的书。」', 2, 'c12_a'],
+  ['「回来吧。你回来我就有时间。」', 1, 'c12_b'],
+  ['什么也不说，直接买了去他城市的车票', 2, 'c12_c']
+]);
+
+LB('c12_a');
+Ex('mzt','calm');
+S('xtbt','calm','别回来。你在那边好好读你的书。');
+S('mzt','calm','……你爸爸我又不是不回来。');
+S('xtbt','calm','你回来一趟要坐四个小时。');
+S('xtbt','calm','你回来两天，就得赶回去上两节课。');
+S('xtbt','calm','你自己算算，划算吗。');
+N('对面沉默了一会儿。');
+S('mzt','calm','你什么时候学会算账了。');
+S('xtbt','calm','跟你学的。');
+S('mzt','calm','……');
+S('mzt','calm','行。');
+S('mzt','calm','那周六下午三点，不许迟到。');
+S('xtbt','calm','我尽量。');
+S('mzt','calm','不是尽量。');
+S('mzt','calm','你迟到了我就跳着等。');
+N('高三这一年，他真的没回来。');
+N('但他一次都没让周六的空房间空着。');
+I('xtbt','calm','（我让他别回来。这句是我说的。）');
+I('xtbt','calm','（我没想到他会记这么死。）');
+GO('c12_end');
+
+LB('c12_b');
+Ex('mzt','smug');
+S('xtbt','calm','回来吧。你回来我就有时间。');
+N('对面笑了。');
+S('mzt','smug','你这话，是你爸爸我今年听过最好听的一句。');
+S('mzt','smug','不过不行。');
+S('xtbt','calm','为什么。');
+S('mzt','smug','我要是回来，你就天天跟我玩。');
+S('mzt','smug','你就考不上了。');
+S('xtbt','calm','……');
+S('mzt','smug','你以为我不知道你？');
+S('mzt','smug','我一在，你就不写题。');
+N('XTBT 想反驳，发现反驳不了。');
+S('mzt','calm','所以我在山脚下等你。');
+S('mzt','calm','你什么时候爬上来，我什么时候在。');
+I('xtbt','calm','（他是对的。）');
+I('xtbt','calm','（他在我身边的时候，我一道题都写不进去。）');
+GO('c12_end');
+
+LB('c12_c');
+Ex('mzt','surprise');
+N('XTBT 什么也没说。');
+N('他把攒了半年的零花钱买了一张车票，周六早上六点出发。');
+N('中午他到的时候，mzt 正在食堂吃饭。');
+N('他看见 XTBT 站在食堂门口，手里的筷子停了一下，然后又低头继续吃。');
+S('mzt','surprise','包子。');
+S('xtbt','calm','嗯。');
+S('mzt','surprise','你高三。');
+S('xtbt','calm','我知道。');
+S('mzt','surprise','你翘了课。');
+S('xtbt','calm','我请了假。');
+N('那天下午，两个人在大学的操场边上坐了三个小时。');
+N('mzt 一句话都没骂他。');
+N('临走的时候，他把自己脖子上的围巾解下来，扔到 XTBT 怀里。');
+S('mzt','calm','拿着。');
+S('xtbt','calm','这都春天了。');
+S('mzt','calm','拿着。');
+S('mzt','calm','你回家要是感冒了，我每年都回来揍你一次。');
+I('xtbt','calm','（那条围巾我戴了整个高三。）');
+I('xtbt','calm','（它现在还在我柜子里。）');
+GO('c12_end');
+
+LB('c12_end');
+BG('contest'); FX(null);
+N('高考那两天，mzt 每考完一门就发一条消息。');
+N('不问候，不问复习，只发一句话。');
+N('第一天：「死了就重来。」');
+N('第二天：「还有三关。」');
+N('第三天：「你爸爸我在山脚下。」');
+N('查分那天，XTBT 的分数比模拟考高了三十七分。');
+N('他把成绩截图发过去。');
+N('对面过了五分钟才回。');
+N('「第一行那个名字，我看见了。」');
+N('「恭喜。」');
+N('「下面那句是我加的。」');
+N('XTBT 打开洛谷。');
+N('榜单第一行是 mzt，第二行是他自己。');
+N('这一次，是真的凭分排的。');
+N('他给对面发了三个字。');
+N('「你等我。」');
+N('对面回得很快。');
+N('「等你三年了。快点。」');
+IF('late','>=',1,'warm_route','true_route');
+LB('true_route');
+IFA('>=',18,'bonus_hot','bonus_cold');
+
+LB('bonus_cold');
+BG('machine_room_night'); FX(null);
+N('毕业那天，XTBT 一个人回了一趟机房。');
+N('那间屋子里还是那三十台机器，和一台定在 26 度的空调。');
+N('他坐在自己原来的位置上，打开洛谷。');
+N('主页上，那个名字还是 Minzitong2026，名牌上挂着金钩。');
+N('签名还是系统默认的那一句。');
+N('他给对面发了条消息：你签名怎么还不改。');
+N('对面回：神不在乎。');
+N('XTBT 笑了很久。他现在知道那四个字是什么意思了。');
+N('——神在乎的东西，不写在签名里。');
+END('true');
+
+LB('bonus_hot');
+BG('machine_room_night'); FX(null);
+N('毕业那天，mzt 坐了两个小时的车回来。');
+N('他站在机房门口，两手插在口袋里，围着那条已经很旧的围巾。');
+SHOW('mzt','right','smug'); SHOW('xtbt','left','smile');
+S('mzt','smug','包子。');
+S('xtbt','smile','你怎么来了。');
+S('mzt','smug','你毕业，我当然来。');
+S('mzt','smug','我是你爸爸。');
+S('xtbt','smile','……你不是让我别叫了吗。');
+S('mzt','smug','我说的是你别叫。');
+S('mzt','smug','我自己可以说。');
+N('他走到 XTBT 原来的位置上坐下，把电脑包扔在桌上。');
+S('mzt','calm','我跟你说个事。');
+S('xtbt','calm','嗯。');
+S('mzt','calm','你把志愿填到这边来。');
+S('mzt','calm','我查过了，你们那个分，能上。');
+S('xtbt','calm','……你查了？');
+S('mzt','calm','查了。');
+S('mzt','calm','查到凌晨两点。');
+N('XTBT 看着他。三年里他见过这个人骂人、吹牛、拍桌子、爬山、死了又爬上去。');
+N('而他第一次听见这个人把一件事安排得这么细。');
+S('xtbt','smile','好。');
+S('mzt','smug','这还差不多。');
+N('他站起来，把那张打印好的志愿对照表放在桌上。');
+N('——这是 XTBT 认识他这么多年，第一次见到他用纸。');
+END('true');
+
+LB('warm_route');
+IFA('>=',18,'warm_hot','warm_plain');
+
+LB('warm_plain');
+BG('machine_room_night'); FX(null);
+N('毕业那天，XTBT 一个人回了一趟机房。');
+N('他坐在原来的位置上，翻开手机。');
+N('那个叫 Minzitong2026 的主页还是那句默认签名。');
+N('他给对面发了一条消息：我毕业了。');
+N('对面过了很久才回。');
+N('「我知道。」');
+N('「那天在车站我说的话，你听见了吧。」');
+N('XTBT 看着屏幕，笑了。');
+N('「听见了。」');
+N('「说了就是说了，收不回去。」');
+N('对面回了一个字：嗯。');
+N('那年九月，两个人去了同一座城市。');
+N('（那张志愿表是他给我列的。他列的时候骂了我一路包子。）');
+END('warm');
+
+LB('warm_hot');
+BG('machine_room_night'); FX(null);
+N('毕业那天，mzt 坐了两个小时的车回来。');
+N('他没说自己是来干什么的，就站在机房门口。');
+SHOW('mzt','right','calm'); SHOW('xtbt','left','smile');
+S('mzt','calm','包子。');
+S('xtbt','smile','你上次在车站说的那句话，再说一遍。');
+N('mzt 的耳朵红了。');
+S('mzt','calm','……哪句。');
+S('xtbt','smile','你说「这次说清楚，你别插嘴」。');
+N('他深吸了一口气，把手插在口袋里，看着机房的空调。');
+S('mzt','calm','我喜欢你。');
+S('mzt','calm','从初一那个晚上就开始喜欢。');
+S('mzt','calm','那时候你抬头看我，我就完了。');
+N('机房里很安静。空调还是 26 度。');
+N('XTBT 走过去，抓住了他的手腕。');
+S('xtbt','smile','知道了。');
+S('xtbt','smile','你爸爸我早就知道了。');
+S('mzt','smug','……包子你找死。');
+END('warm');
+/*</DATA>*/
+
+/* =======================================================================
+   表情 → SVG 立绘
+   ======================================================================= */
+const EXPR = {
+  calm:    {eye:'open',    brow:'flat',  mouth:'line',   blush:.08},
+  smile:   {eye:'arc',     brow:'soft',  mouth:'curve',  blush:.20},
+  laugh:   {eye:'arc',     brow:'soft',  mouth:'laugh',  blush:.30},
+  blush:   {eye:'wide',    brow:'up',    mouth:'tiny',   blush:.62},
+  shy:     {eye:'down',    brow:'sad',   mouth:'wave',   blush:.72},
+  smug:    {eye:'half',    brow:'cock',  mouth:'smirk',  blush:.12},
+  sad:     {eye:'down',    brow:'sad',   mouth:'frown',  blush:.06},
+  serious: {eye:'sharp',   brow:'angry', mouth:'line',   blush:0},
+  cry:     {eye:'cry',     brow:'sad',   mouth:'cryo',   blush:.40},
+  surprise:{eye:'wide',    brow:'up',    mouth:'o',      blush:.18}
+};
+
+function irisSVG(cfg, dy){
+  return '<ellipse rx="11" ry="13" fill="'+cfg.iris+'" opacity=".95" transform="translate(1,'+dy+')"/>'
+    + '<ellipse rx="5.6" ry="6.6" fill="#241a33" transform="translate(1,'+(dy+1)+')"/>'
+    + '<circle cx="-2.6" cy="'+(dy-4.5)+'" r="3.4" fill="#fff" opacity=".95"/>'
+    + '<circle cx="4" cy="'+(dy+5)+'" r="1.7" fill="#fff" opacity=".62"/>';
+}
+
+function eyeSVG(cfg, E, side){
+  const dark='#3b2a4e', white='#fffdfa', skin=cfg.skin;
+  let out='';
+  switch(E.eye){
+    case 'open':
+      out='<ellipse rx="15" ry="17" fill="'+white+'"/>'+irisSVG(cfg,0)
+        +'<path d="M-16,-9 Q0,-24 15,-7" stroke="'+dark+'" stroke-width="4.6" fill="none" stroke-linecap="round"/>';
+      break;
+    case 'wide':
+      out='<ellipse rx="15.5" ry="19" fill="'+white+'"/>'+irisSVG(cfg,1)
+        +'<path d="M-16,-11 Q0,-27 15,-9" stroke="'+dark+'" stroke-width="4.2" fill="none" stroke-linecap="round"/>'
+        +'<path d="M-11,14 Q0,18 12,13" stroke="'+dark+'" stroke-width="2.4" fill="none" opacity=".55" stroke-linecap="round"/>';
+      break;
+    case 'half':
+      out='<ellipse rx="15" ry="17" fill="'+white+'"/>'+irisSVG(cfg,2)
+        +'<path d="M-18,-1 L18,-1 L18,-26 L-18,-26 Z" fill="'+skin+'"/>'
+        +'<path d="M-16,-2 Q0,-18 15,-1" stroke="'+dark+'" stroke-width="4.6" fill="none" stroke-linecap="round"/>';
+      break;
+    case 'down':
+      out='<ellipse rx="15" ry="17" fill="'+white+'"/>'+irisSVG(cfg,5)
+        +'<path d="M-18,1 L18,1 L18,-26 L-18,-26 Z" fill="'+skin+'"/>'
+        +'<path d="M-16,0 Q0,-13 15,1" stroke="'+dark+'" stroke-width="4.4" fill="none" stroke-linecap="round"/>';
+      break;
+    case 'sharp':
+      out='<ellipse rx="15" ry="12" fill="'+white+'"/>'
+        +'<ellipse rx="10.6" ry="9.6" fill="'+cfg.iris+'" opacity=".95" transform="translate(1,-1)"/>'
+        +'<ellipse rx="5" ry="5.4" fill="#241a33" transform="translate(1,0)"/>'
+        +'<circle cx="-2.6" cy="-4" r="3" fill="#fff" opacity=".9"/>'
+        +'<path d="M-16,-7 Q2,-19 15,-3" stroke="'+dark+'" stroke-width="4.8" fill="none" stroke-linecap="round"/>';
+      break;
+    case 'arc':
+      out='<path d="M-15,3 Q0,-14 15,3" stroke="'+dark+'" stroke-width="5" fill="none" stroke-linecap="round"/>';
+      break;
+    case 'cry':
+      out='<path d="M-15,-2 Q0,11 15,-2" stroke="'+dark+'" stroke-width="4.6" fill="none" stroke-linecap="round"/>'
+        +'<path d="M2,9 C-3,19 -2,26 2,27 C7,28 8,19 4,11 Z" fill="#8ed8ff" opacity=".85"/>';
+      break;
+    default:
+      out='<ellipse rx="15" ry="17" fill="'+white+'"/>'+irisSVG(cfg,0);
+  }
+  const bmap={
+    flat :'M-17,-30 Q0,-34 17,-30',
+    soft :'M-17,-32 Q0,-37 17,-30',
+    up   :'M-17,-34 Q0,-42 17,-33',
+    sad  :'M-17,-37 Q0,-35 17,-28',
+    angry:'M-17,-27 Q0,-33 17,-36',
+    cock : side===0 ? 'M-17,-35 Q0,-41 17,-32' : 'M-17,-29 Q0,-32 17,-29'
+  };
+  out+='<path d="'+(bmap[E.brow]||bmap.flat)+'" stroke="'+dark+'" stroke-width="4" fill="none" stroke-linecap="round"/>';
+  return out;
+}
+
+function mouthSVG(E){
+  const dark='#5c3244';
+  switch(E.mouth){
+    case 'curve': return '<path d="M-9,-1 Q0,8 9,-1" stroke="'+dark+'" stroke-width="3.6" fill="none" stroke-linecap="round"/>';
+    case 'laugh': return '<path d="M-11,-1 Q0,16 11,-1 Q0,5 -11,-1 Z" fill="'+dark+'"/>'
+      +'<path d="M-6,4 Q0,11 6,4 Z" fill="#e08a9a"/>';
+    case 'tiny':  return '<path d="M-4,1 Q0,6 4,1" stroke="'+dark+'" stroke-width="3.2" fill="none" stroke-linecap="round"/>';
+    case 'wave':  return '<path d="M-9,2 Q-4.5,-4 0,1 Q4.5,6 9,0" stroke="'+dark+'" stroke-width="3.2" fill="none" stroke-linecap="round"/>';
+    case 'smirk': return '<path d="M-10,-2 Q2,9 12,-4" stroke="'+dark+'" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+    case 'frown': return '<path d="M-9,5 Q0,-4 9,5" stroke="'+dark+'" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+    case 'o':     return '<ellipse rx="4.6" ry="6" fill="#6b3a48"/>';
+    case 'cryo':  return '<ellipse rx="6.5" ry="8.5" fill="#5a2d3c"/>';
+    default:      return '<path d="M-8,0 H8" stroke="'+dark+'" stroke-width="3.4" fill="none" stroke-linecap="round"/>';
+  }
+}
+
+function starSVG(x,y,s,fill){
+  return '<path transform="translate('+x+','+y+') scale('+s+')" fill="'+fill+'" d="M0,-9 L2.6,-2.8 L9,-2.8 L3.9,1 L5.9,7 L0,3.4 L-5.9,7 L-3.9,1 L-9,-2.8 L-2.6,-2.8 Z"/>';
+}
+
+function spriteSVG(who, exprName){
+  const cfg=CH[who], E=EXPR[exprName]||EXPR.calm, h=cfg.hairA, hb=cfg.hairB, hc=cfg.hairC;
+  const dark='#3b2a4e';
+  let back='', front='', acc='', body='';
+
+  if(cfg.style==='twin'){
+    back+='<path d="M160,84 C220,84 246,124 242,186 C238,238 248,288 256,332 C222,350 98,350 64,332 C72,288 82,238 78,186 C74,124 100,84 160,84 Z" fill="'+h+'"/>';
+    back+='<path d="M84,172 C44,198 34,264 46,332 C52,368 80,384 98,364 C76,332 68,268 90,222 Z" fill="'+h+'"/>';
+    back+='<path d="M236,172 C276,198 286,264 274,332 C268,368 240,384 222,364 C244,332 252,268 230,222 Z" fill="'+h+'"/>';
+    back+='<path d="M86,178 C60,206 56,262 66,318" stroke="'+hb+'" stroke-width="6" fill="none" opacity=".5" stroke-linecap="round"/>';
+    back+='<path d="M234,178 C260,206 264,262 254,318" stroke="'+hb+'" stroke-width="6" fill="none" opacity=".5" stroke-linecap="round"/>';
+    front+='<path d="M96,162 C92,110 124,84 160,84 C196,84 228,110 224,162 C216,138 200,126 188,150 C178,120 158,114 146,144 C134,116 110,124 96,162 Z" fill="'+hb+'"/>';
+    front+='<path d="M112,96 C124,86 140,82 160,82" stroke="'+hc+'" stroke-width="7" fill="none" opacity=".55" stroke-linecap="round"/>';
+    front+='<path d="M96,150 C86,196 88,236 100,268 C88,240 82,196 88,150 Z" fill="'+hb+'"/>';
+    front+='<path d="M224,150 C234,196 232,236 220,268 C232,240 238,196 232,150 Z" fill="'+hb+'"/>';
+    body+='<path d="M160,262 C196,262 232,282 246,318 C258,350 262,404 262,460 L58,460 C58,404 62,350 74,318 C88,282 124,262 160,262 Z" fill="'+cfg.clothA+'"/>';
+    body+='<path d="M136,264 C142,292 150,304 160,314 C170,304 178,292 184,264 C176,260 168,258 160,258 C152,258 144,260 136,264 Z" fill="'+cfg.clothB+'"/>';
+    body+='<path d="M78,338 C126,358 194,358 242,338" stroke="'+cfg.clothC+'" stroke-width="7" fill="none" opacity=".55"/>';
+    body+='<path d="M74,300 C92,292 116,288 138,287" stroke="'+cfg.clothC+'" stroke-width="4" fill="none" opacity=".4"/>';
+    acc+=starSVG(206,112,1.15,'#ffe066')+starSVG(216,96,.7,'#fff3b0');
+    acc+='<ellipse cx="88" cy="176" rx="9" ry="12" fill="'+cfg.clothC+'"/><ellipse cx="232" cy="176" rx="9" ry="12" fill="'+cfg.clothC+'"/>';
+  }else if(cfg.style==='pony'){
+    back+='<path d="M160,84 C216,84 240,122 236,176 C232,220 240,250 246,272 C214,292 106,292 74,272 C80,250 88,220 84,176 C80,122 104,84 160,84 Z" fill="'+h+'"/>';
+    back+='<path d="M198,98 C240,88 268,114 266,160 C264,208 246,252 230,286 C220,308 194,306 189,288 C206,254 226,206 222,166 C219,132 208,116 190,118 Z" fill="'+h+'"/>';
+    back+='<path d="M210,112 C240,110 254,134 251,168" stroke="'+hb+'" stroke-width="6" fill="none" opacity=".45"/>';
+    front+='<path d="M96,160 C96,108 122,82 160,82 C198,82 224,108 224,160 C218,136 208,120 194,144 C186,116 168,110 152,138 C142,112 112,122 96,160 Z" fill="'+hb+'"/>';
+    front+='<path d="M124,92 C136,84 148,82 160,82" stroke="'+hc+'" stroke-width="6" fill="none" opacity=".5" stroke-linecap="round"/>';
+    front+='<path d="M96,152 C86,196 88,238 100,270 C88,242 82,196 88,152 Z" fill="'+hb+'"/>';
+    front+='<path d="M224,150 C232,192 230,232 220,262 C230,238 236,196 232,150 Z" fill="'+hb+'"/>';
+    body+='<path d="M160,262 C196,262 232,282 246,318 C258,350 262,404 262,460 L58,460 C58,404 62,350 74,318 C88,282 124,262 160,262 Z" fill="'+cfg.clothA+'"/>';
+    body+='<path d="M136,264 C142,292 150,304 160,314 C170,304 178,292 184,264 C176,260 168,258 160,258 C152,258 144,260 136,264 Z" fill="'+cfg.clothB+'"/>';
+    body+='<path d="M76,326 C124,348 196,348 244,326" stroke="'+cfg.clothB+'" stroke-width="8" fill="none" opacity=".7"/>';
+    body+='<path d="M152,268 L160,296 L168,268" stroke="'+cfg.clothC+'" stroke-width="3.4" fill="none" opacity=".7"/>';
+    acc+='<ellipse cx="201" cy="103" rx="11" ry="8" fill="'+cfg.clothC+'" transform="rotate(-22 201 103)"/>';
+    acc+='<g opacity=".8" fill="none" stroke="#dfe6ff" stroke-width="2.2">'
+      +'<circle cx="186" cy="181" r="20"/><circle cx="134" cy="181" r="20"/>'
+      +'<path d="M154,178 h12"/><path d="M114,176 L98,166"/><path d="M206,176 L222,166"/></g>';
+  }else if(cfg.style==='mzt'){
+    /* 场切黑题的那位：浅银发、头顶翘一撮、深紫黑外套 */
+    back+='<path d="M160,84 C218,84 242,120 238,176 C234,218 244,250 250,270 C216,292 104,292 70,270 C76,250 86,218 82,176 C78,120 102,84 160,84 Z" fill="'+h+'"/>';
+    front+='<path d="M90,156 C90,100 120,76 160,76 C200,76 230,100 230,156 C224,134 216,122 208,116 L200,140 L188,110 L176,138 L160,104 L144,138 L132,110 L120,140 L110,116 C102,122 96,138 90,156 Z" fill="'+hb+'"/>';
+    front+='<path d="M90,148 C84,192 86,232 94,264 C84,238 80,194 84,148 Z" fill="'+hb+'"/>';
+    front+='<path d="M230,148 C236,192 234,232 226,264 C236,238 240,194 236,148 Z" fill="'+hb+'"/>';
+    front+='<path d="M156,76 L172,48 L150,60 L164,32 L186,58 L174,78 Z" fill="'+hb+'"/>';
+    front+='<path d="M118,84 C132,78 146,76 160,76" stroke="'+hc+'" stroke-width="6" fill="none" opacity=".65" stroke-linecap="round"/>';
+    body+='<path d="M160,262 C204,262 246,284 260,320 C272,352 276,404 276,460 L44,460 C44,404 48,352 60,320 C74,284 116,262 160,262 Z" fill="'+cfg.clothA+'"/>';
+    body+='<path d="M128,262 C140,290 150,302 160,312 C170,302 180,290 192,262 C180,257 170,254 160,254 C150,254 140,257 128,262 Z" fill="'+cfg.clothB+'"/>';
+    body+='<path d="M96,330 C130,352 190,352 224,330" stroke="'+cfg.clothC+'" stroke-width="5" fill="none" opacity=".4"/>';
+    body+='<path d="M160,314 L160,460" stroke="'+cfg.clothB+'" stroke-width="4" fill="none" opacity=".75"/>';
+    acc+='<path d="M116,268 L160,300 L204,268" stroke="'+cfg.clothC+'" stroke-width="3.4" fill="none" opacity=".55"/>';
+  }else if(cfg.style==='boy'||cfg.style==='boy2'){
+    const spiky=(cfg.style==='boy');
+    back+='<path d="M160,84 C216,84 240,120 236,174 C232,216 242,248 248,268 C214,290 106,290 72,268 C78,248 88,216 84,174 C80,120 104,84 160,84 Z" fill="'+h+'"/>';
+    front+= spiky
+      ? '<path d="M92,158 C92,102 122,78 160,78 C198,78 228,102 228,158 C222,136 214,124 206,118 L198,142 L186,114 L174,140 L160,108 L146,140 L134,112 L122,142 L112,118 C104,124 98,140 92,158 Z" fill="'+hb+'"/>'
+      : '<path d="M94,156 C94,106 122,80 160,80 C198,80 226,106 226,156 C218,136 206,128 194,150 C186,120 170,112 156,138 C144,112 112,120 94,156 Z" fill="'+hb+'"/>';
+    front+='<path d="M92,150 C86,192 88,230 96,260 C86,234 82,194 86,150 Z" fill="'+hb+'"/>';
+    front+='<path d="M228,150 C234,192 232,230 224,260 C234,234 238,194 234,150 Z" fill="'+hb+'"/>';
+    if(spiky) front+='<path d="M158,78 L168,54 L150,64 L160,40 L180,60 L172,80 Z" fill="'+hb+'"/>';
+    body+='<path d="M160,262 C202,262 242,284 256,320 C268,352 272,404 272,460 L48,460 C48,404 52,352 64,320 C78,284 118,262 160,262 Z" fill="'+cfg.clothA+'"/>';
+    body+='<path d="M132,262 C142,288 150,300 160,310 C170,300 178,288 188,262 C177,258 168,256 160,256 C152,256 143,258 132,262 Z" fill="'+cfg.clothB+'"/>';
+    body+='<path d="M104,296 C128,312 192,312 216,296" stroke="'+cfg.clothC+'" stroke-width="3.4" fill="none" opacity=".5"/>';
+    body+='<path d="M140,300 C146,328 154,342 160,350" stroke="'+cfg.clothC+'" stroke-width="3" fill="none" opacity=".75"/>';
+    body+='<path d="M180,300 C174,328 166,342 160,350" stroke="'+cfg.clothC+'" stroke-width="3" fill="none" opacity=".75"/>';
+    if(spiky){
+      acc+='<path d="M70,262 C70,312 104,342 160,342 C216,342 250,312 250,262" stroke="#c9d3ff" stroke-width="7" fill="none" opacity=".7" stroke-linecap="round"/>';
+      acc+='<rect x="52" y="244" width="21" height="32" rx="10" fill="#2b3350" stroke="#c9d3ff" stroke-width="3.4"/>';
+      acc+='<rect x="247" y="244" width="21" height="32" rx="10" fill="#2b3350" stroke="#c9d3ff" stroke-width="3.4"/>';
+    }else{
+      acc+='<path d="M104,272 L216,272" stroke="'+cfg.clothC+'" stroke-width="4" fill="none" opacity=".45"/>';
+      acc+='<path d="M134,262 L160,286 L186,262" stroke="'+cfg.clothC+'" stroke-width="3" fill="none" opacity=".5"/>';
+    }
+  }else{
+    back+='<path d="M160,86 C214,86 238,120 234,172 C230,216 240,248 246,268 C214,288 106,288 74,268 C80,248 90,216 86,172 C82,120 106,86 160,86 Z" fill="'+h+'"/>';
+    back+='<path d="M92,188 C58,212 50,266 60,320 C64,344 88,354 100,338 C82,312 80,262 100,230 Z" fill="'+h+'"/>';
+    back+='<path d="M108,196 C96,246 98,296 112,330 C100,300 96,248 106,200 Z" fill="'+hb+'" opacity=".45"/>';
+    front+='<path d="M96,158 C96,106 122,82 160,82 C198,82 224,106 224,158 C218,138 206,124 192,146 C182,116 166,110 152,140 C140,112 112,120 96,158 Z" fill="'+hb+'"/>';
+    front+='<path d="M118,92 C132,84 146,82 160,82" stroke="'+hc+'" stroke-width="6" fill="none" opacity=".5" stroke-linecap="round"/>';
+    front+='<path d="M96,152 C88,192 90,232 100,262 C90,238 84,196 88,152 Z" fill="'+hb+'"/>';
+    front+='<path d="M224,152 C232,192 230,232 220,262 C230,238 236,196 232,152 Z" fill="'+hb+'"/>';
+    body+='<path d="M160,262 C196,262 232,282 246,318 C258,350 262,404 262,460 L58,460 C58,404 62,350 74,318 C88,282 124,262 160,262 Z" fill="'+cfg.clothA+'"/>';
+    body+='<path d="M136,264 C142,292 150,304 160,314 C170,304 178,292 184,264 C176,260 168,258 160,258 C152,258 144,260 136,264 Z" fill="'+cfg.clothB+'"/>';
+    body+='<path d="M92,268 C74,290 66,320 62,354" stroke="'+cfg.clothB+'" stroke-width="7" fill="none" opacity=".8"/>';
+    acc+='<path d="M104,272 C124,286 196,286 216,272" stroke="'+cfg.clothB+'" stroke-width="5" fill="none" opacity=".5"/>';
+    acc+=starSVG(120,104,.62,'#ff9fc0');
+  }
+
+  return '<svg viewBox="0 0 320 460" width="320" height="460" xmlns="http://www.w3.org/2000/svg">'
+    + '<g>'+back+'</g>'
+    + body
+    + '<rect x="146" y="228" width="28" height="46" rx="12" fill="'+cfg.skin2+'"/>'
+    + '<ellipse cx="160" cy="240" rx="30" ry="11" fill="rgba(0,0,0,.16)"/>'
+    + '<ellipse cx="98" cy="176" rx="9" ry="14" fill="'+cfg.skin+'"/><ellipse cx="222" cy="176" rx="9" ry="14" fill="'+cfg.skin+'"/>'
+    + '<ellipse cx="160" cy="168" rx="62" ry="72" fill="'+cfg.skin+'"/>'
+    + '<ellipse cx="160" cy="206" rx="2.4" ry="1.8" fill="'+cfg.skin2+'"/>'
+    + '<g transform="translate(186,180)">'+eyeSVG(cfg,E,0)+'</g>'
+    + '<g transform="translate(134,180) scale(-1,1)">'+eyeSVG(cfg,E,1)+'</g>'
+    + '<ellipse cx="112" cy="204" rx="17" ry="8" fill="#ff8fa3" opacity="'+E.blush+'"/>'
+    + '<ellipse cx="208" cy="204" rx="17" ry="8" fill="#ff8fa3" opacity="'+E.blush+'"/>'
+    + '<g transform="translate(160,220)">'+mouthSVG(E)+'</g>'
+    + '<g>'+front+'</g>'
+    + '<path d="M158,80 C148,56 170,42 184,52 C172,50 164,62 167,80 Z" fill="'+hc+'" opacity=".9"/>'
+    + acc
+    + '</svg>';
+}
+</script>
+
+<script>
+/* =======================================================================
+   引擎
+   ======================================================================= */
+(function(){
+  const $ = function(s){ return document.querySelector(s); };
+  const LABELS = {};
+  STORY.forEach(function(c,i){ if(c[0]==='LB') LABELS[c[1]]=i; });
+
+  const ENDINGS = {
+    true:{ key:'true', title:'ENDING · 大麦子', sub:'你爸爸我，一路到毕业。' },
+    warm:{ key:'warm', title:'ENDING · 也是大麦子', sub:'话说晚了一点，他还是那句你爸爸我。' }
+  };
+  const MAXAFF = 14;
+  const LS_PROG = 'xtbtlzy.progress.v1';
+  const LS_SAVE = 'xtbtlzy.slot.';
+  const LS_CFG  = 'xtbtlzy.cfg.v1';
+
+  const g = {
+    pc:0, aff:0, flags:{}, hist:[], pos:{left:null,mid:null,right:null},
+    curBg:'', bgT:null, typing:false, typeT:null, auto:false, skip:false,
+    choice:false, lock:false, chapter:'序章', ending:null, started:false, save:null, noCard:false,
+    chatOpen:false, chatWho:null, chatLog:[], tipRow:null, cardOpen:false
+  };
+  const SLOTS = ['left','mid','right'];
+  let topLayer = null;
+
+  /* ---------- 存档配置 ---------- */
+  let cfg = { speed:48, sfx:true };
+  try{ const c=JSON.parse(localStorage.getItem(LS_CFG)||'null'); if(c) cfg=Object.assign(cfg,c); }catch(e){}
+  function saveCfg(){ try{ localStorage.setItem(LS_CFG, JSON.stringify(cfg)); }catch(e){} }
+  function progress(){
+    try{ return JSON.parse(localStorage.getItem(LS_PROG)||'null') || {unlocked:[],best:0,bonus:false}; }
+    catch(e){ return {unlocked:[],best:0,bonus:false}; }
+  }
+  function unlockEnding(k){
+    const p=progress();
+    if(p.unlocked.indexOf(k)<0) p.unlocked.push(k);
+    if(g.aff>p.best) p.best=g.aff;
+    if(g.aff>=18) p.bonus=true;
+    try{ localStorage.setItem(LS_PROG, JSON.stringify(p)); }catch(e){}
+  }
+
+  /* ---------- 音效（极简合成音） ---------- */
+  let AC=null;
+  function blip(freq,dur,vol){
+    if(!cfg.sfx) return;
+    try{
+      AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+      const o=AC.createOscillator(), gn=AC.createGain();
+      o.type='triangle'; o.frequency.value=freq||620;
+      gn.gain.value=vol||0.03;
+      o.connect(gn); gn.connect(AC.destination);
+      const t=AC.currentTime; o.start(t);
+      gn.gain.exponentialRampToValueAtTime(0.0008,t+(dur||0.06));
+      o.stop(t+(dur||0.06)+0.02);
+    }catch(e){}
+  }
+
+  /* ---------- 背景 ---------- */
+  function setBG(name){
+    if(g.curBg===name) return;
+    g.curBg=name;
+    const el=$('#bg');
+    el.classList.remove('on');
+    clearTimeout(g.bgT);
+    g.bgT=setTimeout(function(){
+      el.className='bg s-'+name;
+      void el.offsetWidth;
+      el.classList.add('on');
+    },300);
+  }
+  /* ---------- 粒子层 ---------- */
+  function setFX(kind){
+    const fx=$('#fx'); fx.innerHTML='';
+    if(!kind) return;
+    const n = kind==='stars'?70:52;
+    for(let i=0;i<n;i++){
+      const s=document.createElement('span');
+      if(kind==='stars'){
+        const sz=(Math.random()*1.9+0.9).toFixed(2);
+        s.className='fx-star';
+        s.style.width=sz+'px'; s.style.height=sz+'px';
+        s.style.left=(Math.random()*100).toFixed(2)+'%';
+        s.style.top=(Math.random()*62).toFixed(2)+'%';
+        s.style.animationDelay=(Math.random()*3.4).toFixed(2)+'s';
+        s.style.animationDuration=(2.4+Math.random()*2.6).toFixed(2)+'s';
+      }else{
+        const sz=(Math.random()*2.6+1.4).toFixed(2);
+        s.className='fx-snow';
+        s.style.width=sz+'px'; s.style.height=sz+'px';
+        s.style.left=(Math.random()*100).toFixed(2)+'%';
+        s.style.opacity=(0.35+Math.random()*0.6).toFixed(2);
+        s.style.animationDuration=(7+Math.random()*9).toFixed(2)+'s';
+        s.style.animationDelay=(-Math.random()*12).toFixed(2)+'s';
+      }
+      fx.appendChild(s);
+    }
+  }
+  /* ---------- 立绘 ---------- */
+  function renderSprites(){
+    SLOTS.forEach(function(slot){
+      const el=document.querySelector('.sprite[data-slot="'+slot+'"]');
+      const d=g.pos[slot];
+      if(!d){ el.classList.remove('on','dim','solo'); el.innerHTML=''; return; }
+      el.innerHTML=spriteSVG(d.who,d.expr);
+      el.dataset.who=d.who;
+      el.classList.add('on');
+      el.classList.toggle('solo', !SLOTS.some(function(s){ return s!==slot && g.pos[s]; }));
+      const speaker=g.speaker;
+      const onScreen = !!speaker && SLOTS.some(function(s){ return g.pos[s] && g.pos[s].who===speaker; });
+      el.classList.toggle('dim', onScreen && speaker!==d.who);
+    });
+  }
+  function show(who,slot,expr){
+    if(slot==='auto') slot = SLOTS.find(function(s){ return !g.pos[s]; }) || 'left';
+    g.pos[slot]={who:who,expr:expr};
+    renderSprites();
+  }
+  function hide(who){
+    SLOTS.forEach(function(s){ if(g.pos[s] && g.pos[s].who===who) g.pos[s]=null; });
+    renderSprites();
+  }
+  function expr(who,e){
+    SLOTS.forEach(function(s){ if(g.pos[s] && g.pos[s].who===who) g.pos[s].expr=e; });
+    renderSprites();
+  }
+
+  /* ---------- QQ 聊天窗 ---------- */
+  function chatAvatar(who){
+    const a=document.createElement('span');
+    a.className='av';
+    if(who==='lzy'){                       /* 洛谷随机默认头像：绿白像素风 */
+      a.classList.add('av-pixel');
+      a.title='lzy 的头像';
+    }else if(who==='xtbt'){                /* 玩偶熊 */
+      a.style.background='#f3e6d3';
+      a.innerHTML='<svg viewBox="0 0 24 24"><circle cx="7" cy="7.5" r="4" fill="#c99a63"/>'
+        +'<circle cx="17" cy="7.5" r="4" fill="#c99a63"/>'
+        +'<circle cx="12" cy="13" r="8.2" fill="#d8ad76"/>'
+        +'<circle cx="9.3" cy="12" r="1.35" fill="#4a3a26"/>'
+        +'<circle cx="14.7" cy="12" r="1.35" fill="#4a3a26"/>'
+        +'<ellipse cx="12" cy="15.8" rx="2.3" ry="1.8" fill="#f2ddc0"/>'
+        +'<ellipse cx="12" cy="14.9" rx="1.05" ry="0.85" fill="#4a3a26"/></svg>';
+      a.title='XTBT 的头像';
+    }else{
+      a.style.background=COLS[who]||'#9aa4b2';
+      a.textContent=(NAMES[who]||'?').slice(0,1);
+    }
+    return a;
+  }
+  function clearTip(){ if(g.tipRow){ try{ g.tipRow.remove(); }catch(e){} g.tipRow=null; } }
+  function openChat(who){
+    g.chatOpen=true; g.chatWho=who; g.chatLog=[];
+    $('#chatWho').textContent='与 '+(NAMES[who]||who)+' 的聊天';
+    $('#chatBody').innerHTML='';
+    $('#chat').classList.add('on');
+    $('#sprites').classList.add('chatting');
+    clearTip();
+  }
+  function appendBubble(who,text,record){
+    const body=$('#chatBody');
+    const isMe=(who==='xtbt');                 /* 右侧＝「我」这一侧；左侧标明发信人 */
+    const row=document.createElement('div');
+    row.className='qmsg '+(isMe?'right':'left');
+    row.appendChild(chatAvatar(who));
+    const col=document.createElement('div'); col.className='col';
+    if(!isMe){
+      const nm=document.createElement('div'); nm.className='qname';
+      nm.textContent=NAMES[who]||who; col.appendChild(nm);
+    }
+    const b=document.createElement('div'); b.className='bub'; b.textContent=text;
+    col.appendChild(b); row.appendChild(col);
+    body.appendChild(row);
+    body.scrollTop=body.scrollHeight;
+    if(record!==false) g.chatLog.push({who:who,text:text});
+    if(g.chatLog.length>60) g.chatLog.shift();
+  }
+  function typingTip(who){
+    if(!g.chatOpen) openChat(who);
+    clearTip();
+    const body=$('#chatBody');
+    const row=document.createElement('div');
+    row.className='qmsg left';
+    row.appendChild(chatAvatar(who));
+    const t=document.createElement('div'); t.className='qtip';
+    t.innerHTML='<i></i><i></i><i></i>';
+    row.appendChild(t);
+    body.appendChild(row);
+    body.scrollTop=body.scrollHeight;
+    g.tipRow=row;
+  }
+  function rebuildChat(){
+    const body=$('#chatBody'); body.innerHTML='';
+    $('#chatWho').textContent='与 '+(NAMES[g.chatWho]||g.chatWho||'')+' 的聊天';
+    g.chatLog.slice(-14).forEach(function(m){ appendBubble(m.who,m.text,false); });
+  }
+  /* ---------- 洛谷个人主页卡 / 榜单 ---------- */
+  const PROFILES = {
+    mzt:{
+      v1:{ name:'absyyyy121', badge:'金钩', uid:'799207', av:'mzt',
+        slog:'这个家伙很懒，什么也没有留下',
+        stats:[['关注','12'],['粉丝','9'],['排名','6.8k'],['等级分','1520'],['咕值','96'],['成就','0（未认证）']],
+        foot:'金钩 · 注册于 2022-09-16' },
+      v2:{ name:'Minzitong2026', badge:'金钩', uid:'799207', av:'mzt',
+        slog:'这个家伙很懒，什么也没有留下',
+        stats:[['关注','56'],['粉丝','59'],['排名','2.03k'],['等级分','1857'],['咕值','258'],['成就','0（未认证）']],
+        foot:'金钩 · 注册于 2022-09-16' }
+    },
+    xtbt:{
+      v1:{ name:'XTBT', badge:'', uid:'1024771', av:'xtbt',
+        slog:'今天也要交一题',
+        stats:[['关注','4'],['粉丝','3'],['排名','1.2w'],['等级分','912'],['咕值','31'],['成就','0']],
+        foot:'普通用户' }
+    }
+  };
+  function closeCard(){ $('#card').classList.remove('on'); g.cardOpen=false; }
+  function openCard(title,sub,html){
+    $('#cardTitle').textContent=title;
+    $('#cardSub').textContent=sub||'';
+    $('#cardBody').innerHTML=html;
+    $('#card').classList.add('on');
+    g.cardOpen=true;
+  }
+  function avSVG(who){
+    if(who==='mzt') return '<svg viewBox="0 0 40 40"><rect width="40" height="40" fill="#eef0f7"/>'
+      +'<ellipse cx="20" cy="25" rx="10.5" ry="11.5" fill="#f6f4fb"/>'
+      +'<path d="M9 23 C9 12 14 8 20 8 C26 8 31 12 31 23 C29 16 26 13 24 12 L22 16 L19 11 L16 16 L13 12 C11 14 10 19 9 23 Z" fill="#1e1e24"/>'
+      +'<path d="M19 8 L24 3 L18 5 L22 0.5 L27 4 L24 8 Z" fill="#1e1e24"/>'
+      +'<circle cx="16" cy="25" r="1.9" fill="#4a3b6b"/><circle cx="24" cy="25" r="1.9" fill="#4a3b6b"/>'
+      +'<path d="M17 31 q3 2.2 6 0" stroke="#6b5a8f" stroke-width="1.4" fill="none"/></svg>';
+    return '<svg viewBox="0 0 40 40"><rect width="40" height="40" fill="#3d3a44"/>'
+      +'<ellipse cx="20" cy="25" rx="10.5" ry="11.5" fill="#ffe4d6"/>'
+      +'<path d="M9 23 C9 12 14 8 20 8 C26 8 31 12 31 23 C29 16 25 12 20 12 C15 12 11 16 9 23 Z" fill="#232327"/>'
+      +'<circle cx="16" cy="25" r="1.9" fill="#3b2a1c"/><circle cx="24" cy="25" r="1.9" fill="#3b2a1c"/>'
+      +'<path d="M17 31 q3 2 6 0" stroke="#a9743f" stroke-width="1.4" fill="none"/></svg>';
+  }
+  function showProfile(who,stage){
+    const set=PROFILES[who]; if(!set) return;
+    const P=set[stage]||set.v1;
+    const badge = P.badge
+      ? '<span class="lgBadge lgGold">'+P.badge+'</span>'
+      : '<span class="lgBadge lgNone">未认证</span>';
+    const rows = P.stats.map(function(s){ return '<div>'+s[0]+' <b>'+s[1]+'</b></div>'; }).join('');
+    openCard('洛谷 · 个人中心','luogu.com.cn/user/'+P.uid,
+      '<div class="lgTop"><div class="lgAv">'+avSVG(P.av)+'</div>'
+      +'<div><div class="lgName">'+P.name+badge+'</div><div class="lgUid">UID '+P.uid+'</div></div></div>'
+      +'<div class="lgSlog">「'+P.slog+'」</div><div class="lgStats">'+rows+'</div>'
+      +'<div class="cardFoot">'+P.foot+'</div>');
+  }
+  function showRanks(list,note){
+    const rows=list.map(function(r,i){
+      const who=r[0], score=r[1];
+      const cls = who==='mzt' ? 'him' : (who==='xtbt' ? 'me' : '');
+      return '<div class="rankRow '+cls+'"><span class="rk">'+(i+1)+'</span>'
+        +'<span class="nm">'+(NAMES[who]||who)+'</span><span class="sc">'+score+'</span></div>';
+    }).join('');
+    openCard('集训模拟赛 · 榜单','按总分',
+      rows + (note ? '<div class="rankNote">'+note+'</div>' : ''));
+  }
+
+  function closeChat(){
+    g.chatOpen=false; clearTip();
+    $('#chat').classList.remove('on');
+    $('#sprites').classList.remove('chatting');
+  }
+  function showChat(who,text){
+    if(!g.chatOpen) openChat(who);   /* 已经打开的会话不会因为换人说话而被清空 */
+    clearTip();
+    const dlg=$('#dlg'); dlg.classList.add('hidden');
+    g.speaker=who; renderSprites();
+    appendBubble(who,text);
+    log(NAMES[who],text,'chat');
+    g.typing=false;
+    afterTyping();
+  }
+
+  /* ---------- HUD / 提示 ---------- */
+  function setAff(v,delta){
+    g.aff=Math.max(0,v);
+    $('#affNum').textContent=g.aff;
+    $('#affBar>i').style.width=Math.min(100,g.aff/MAXAFF*100)+'%';
+    if(delta) toast('♥ 心动 +'+delta);
+  }
+  let toastT=null;
+  function toast(msg){
+    const t=$('#toast'); t.textContent=msg; t.classList.add('on');
+    clearTimeout(toastT); toastT=setTimeout(function(){ t.classList.remove('on'); },1400);
+  }
+  function setChapter(txt){ g.chapter=txt; $('#chapterTag').textContent=txt; }
+
+  /* ---------- 对话 ---------- */
+  let autoT=null;
+  function showLine(cmd){
+    const kind=cmd[0];
+    const dlg=$('#dlg'); dlg.classList.remove('hidden');
+    dlg.classList.toggle('narr',kind==='N');
+    dlg.classList.toggle('inner',kind==='I');
+    g.speaker = kind==='N' ? null : cmd[1];
+    renderSprites();
+    if(kind==='N'){
+      $('#name').textContent=''; $('#tag').textContent='';
+      log('', cmd[1], 'narr');
+      typeText(cmd[1]);
+    }else{
+      const who=cmd[1], e=cmd[2], txt=cmd[3];
+      $('#name').textContent=NAMES[who]||who;
+      $('#name').style.color=COLS[who]||'#fff';
+      $('#tag').textContent = kind==='I' ? '内心' : (CH[who]?CH[who].tag:'');
+      if(kind==='S' && CH[who]) expr(who,e);
+      log(kind==='I'?('（'+($('#name').textContent)+' 的心声）'):$('#name').textContent, txt, kind==='I'?'inner':'say');
+      typeText(txt);
+    }
+  }
+  function typeText(t){
+    const el=$('#text');
+    el.textContent='';
+    if(g.skip){ el.textContent=t; g.typing=false; afterTyping(); return; }
+    g.typing=true;
+    const chars=Array.from(t);
+    let i=0;
+    clearInterval(g.typeT);
+    const step=cfg.speed<=26?2:1;
+    g.typeT=setInterval(function(){
+      for(let k=0;k<step && i<chars.length;k++) el.textContent+=chars[i++];
+      if(i>=chars.length){ clearInterval(g.typeT); g.typing=false; afterTyping(); }
+    },cfg.speed);
+  }
+  function finishTyping(){
+    clearInterval(g.typeT); g.typing=false;
+    const cmd=STORY[g.pc];
+    if(cmd){ const t = cmd[0]==='N'?cmd[1]:cmd[3]; $('#text').textContent=t||''; }
+    afterTyping();
+  }
+  function afterTyping(){
+    if(g.auto){ clearTimeout(autoT); autoT=setTimeout(function(){ if(g.auto&&!g.choice) advance(); }, 1100); }
+    if(g.skip){ clearTimeout(autoT); autoT=setTimeout(function(){ if(g.skip&&!g.choice) advance(); }, 40); }
+  }
+  function log(name,text,kind){ g.hist.push({name:name,text:text,kind:kind}); if(g.hist.length>400) g.hist.shift(); }
+
+  /* ---------- 主循环 ---------- */
+  function step(){
+    if(g.pc<0||g.pc>=STORY.length){ showEnding('true'); return; }
+    const cmd=STORY[g.pc];
+    switch(cmd[0]){
+      case 'BG':   setBG(cmd[1]); g.pc++; return step();
+      case 'FX':   setFX(cmd[1]); g.pc++; return step();
+      case 'CH':   chapterCard(cmd[1],cmd[2]); return;
+      case 'SHOW': show(cmd[1],cmd[2],cmd[3]); g.pc++; return step();
+      case 'HIDE': hide(cmd[1]); g.pc++; return step();
+      case 'EXPR': expr(cmd[1],cmd[2]); g.pc++; return step();
+      case 'AFF':  setAff(g.aff+cmd[1],cmd[1]); g.pc++; return step();
+      case 'SET':  g.flags[cmd[1]]=cmd[2]; g.pc++; return step();
+      case 'QQ':   openChat(cmd[1]); g.pc++; return step();
+      case 'Q':    showChat(cmd[1],cmd[2]); return;
+      case 'QT':   typingTip(cmd[1]); g.pc++; return step();
+      case 'QX':   closeChat(); g.pc++; return step();
+      case 'PROF': showProfile(cmd[1],cmd[2]); g.pc++; return step();
+      case 'RANKS':showRanks(cmd[1],cmd[2]); g.pc++; return step();
+      case 'CARDX':closeCard(); g.pc++; return step();
+      case 'LB':   g.pc++; return step();
+      case 'GO':   jump(cmd[1]); return step();
+      case 'IF':   jump(cond(cmd[1],cmd[2],cmd[3])?cmd[4]:cmd[5]); return step();
+      case 'IFA':  jump(cond('aff',cmd[1],cmd[2])?cmd[3]:cmd[4]); return step();
+      case 'CHOICE': showChoice(cmd[1],cmd[2]); return;
+      case 'N': case 'S': case 'I': showLine(cmd); return;
+      case 'END':  showEnding(cmd[1]); return;
+      default: g.pc++; return step();
+    }
+  }
+  function cond(key,op,v){
+    const cur = key==='aff' ? g.aff : (g.flags[key]||0);
+    if(op==='==') return cur===v;
+    if(op==='>=') return cur>=v;
+    if(op==='<')  return cur<v;
+    if(op==='>')  return cur>v;
+    return false;
+  }
+  function jump(label){
+    const i=LABELS[label];
+    if(i==null){ console.warn('missing label',label); g.pc=STORY.length; return; }
+    g.pc=i;
+  }
+  function advance(){
+    if(g.choice||g.lock||g.ending) return;
+    if(g.typing){ finishTyping(); return; }
+    g.pc++; step();
+  }
+  function chapterCard(num,title){
+    setChapter(num+' · '+title);
+    if(g.noCard){ g.pc++; return step(); }
+    const el=$('#chap');
+    $('#chapNum').textContent=num;
+    $('#chapTitle').textContent=title;
+    el.classList.add('on');
+    g.lock=true;
+    blip(520,0.12,0.025);
+    setTimeout(function(){ el.classList.remove('on'); },1700);
+    setTimeout(function(){ g.lock=false; g.pc++; step(); },1400);
+  }
+  function showChoice(q,opts){
+    g.choice=true;
+    const box=$('#choices'); box.innerHTML='';
+    if(q){ const qq=document.createElement('div'); qq.className='chq'; qq.textContent=q; box.appendChild(qq); }
+    opts.forEach(function(o){
+      const b=document.createElement('button');
+      b.className='chbtn';
+      b.textContent=o[0];
+      b.onclick=function(ev){
+        ev.stopPropagation();
+        blip(760,0.08,0.03);
+        box.classList.add('hidden');
+        g.choice=false;
+        if(o[1]){ setAff(g.aff+o[1],o[1]); }
+        log('你的选择',o[0],'say');
+        jump(o[2]);
+        step();
+      };
+      box.appendChild(b);
+    });
+    box.classList.remove('hidden');
+  }
+
+  /* ---------- 结局 ---------- */
+  function showEnding(key){
+    const e=ENDINGS[key]||ENDINGS.true;
+    g.ending=key;
+    unlockEnding(key);
+    const p=progress();
+    $('#overlay').classList.remove('hidden');
+    $('#ovPanel').innerHTML =
+      '<div class="endcard">'
+      +'<div class="ovsub">剧终</div>'
+      +'<div class="et">'+e.title+'</div>'
+      +'<div class="es">'+e.sub+'</div>'
+      +'<div class="score">'
+      +'<span>心动值 <b>'+g.aff+'</b> / '+MAXAFF+'</span>'
+      +'<span>彩蛋 '+(g.aff>=18?'<b>已解锁</b>':'未解锁（心动值 ≥ 18）')+'</span>'
+      +'<span>结局 '+(p.unlocked.length)+' / 2</span>'
+      +'</div>'
+      +'<div class="ovrow" style="justify-content:center">'
+      +'<button data-act="endings">结局一览</button>'
+      +'<button data-act="retry">重新开始</button>'
+      +'<button data-act="home">返回标题</button>'
+      +'</div></div>';
+    $('#title').classList.add('hidden');
+  }
+
+  /* ---------- 存档 ---------- */
+  function doSave(slot){
+    const data={ pc:g.pc, aff:g.aff, flags:g.flags, pos:g.pos, bg:g.curBg, chapter:g.chapter,
+      chatOpen:g.chatOpen, chatWho:g.chatWho, chatLog:g.chatLog.slice(-40),
+      hist:g.hist.slice(-60), t:Date.now() };
+    try{ localStorage.setItem(LS_SAVE+slot, JSON.stringify(data)); }catch(err){}
+    toast('已存档到 ' + slot);
+    if($('#overlay').classList.contains('hidden')===false) openOverlay('save');
+  }
+  function doLoad(slot){
+    let d=null;
+    try{ d=JSON.parse(localStorage.getItem(LS_SAVE+slot)||'null'); }catch(e){}
+    if(!d){ toast('该存档是空的'); return false; }
+    g.pc=d.pc; g.aff=d.aff||0; g.flags=d.flags||{}; g.pos=d.pos||{left:null,mid:null,right:null};
+    if(!('mid' in g.pos)) g.pos.mid=null;
+    g.hist=d.hist||[]; g.chapter=d.chapter||'';
+    g.chatOpen=!!d.chatOpen; g.chatWho=d.chatWho||null; g.chatLog=d.chatLog||[]; g.tipRow=null;
+    setChapter(g.chapter||'　');
+    setAff(g.aff);
+    g.curBg=null; setBG(d.bg||'classroom');
+    renderSprites();
+    /* 聊天窗按记录重建；当前这一句如果是消息，去掉末尾一条避免重复播放 */
+    if(g.chatOpen && g.chatWho){
+      const cur=STORY[g.pc];
+      if(cur && cur[0]==='Q' && g.chatLog.length &&
+         g.chatLog[g.chatLog.length-1].who===cur[1] && g.chatLog[g.chatLog.length-1].text===cur[2]){
+        g.chatLog=g.chatLog.slice(0,-1);
+      }
+      $('#chat').classList.add('on'); $('#sprites').classList.add('chatting');
+      rebuildChat();
+    }else{ closeChat(); }
+    closeCard();
+    closeOverlay();
+    $('#title').classList.add('hidden');
+    $('#stage').style.display='';
+    g.started=true;
+    toast('读档完成');
+    setTimeout(function(){ step(); },340);
+    return true;
+  }
+  function slotMeta(slot){
+    try{ const d=JSON.parse(localStorage.getItem(LS_SAVE+slot)||'null'); return d; }catch(e){ return null; }
+  }
+  function lastSlot(){
+    let best=null,bs=-1;
+    [1,2,3].forEach(function(s){ const d=slotMeta(s); if(d&&d.t>bs){bs=d.t;best=s;} });
+    return best;
+  }
+
+  /* ---------- 弹层 ---------- */
+  let ovTab='hist';
+  function openOverlay(tab){
+    ovTab=tab||'hist';
+    if(!g.started && ovTab!=='cfg' && ovTab!=='endings') return;
+    $('#overlay').classList.remove('hidden');
+    render();
+  }
+  function closeOverlay(){ $('#overlay').classList.add('hidden'); }
+
+  function render(){
+    const p=$('#ovPanel');
+    const tabs = '<div class="ovrow">'
+      +'<button data-tab="hist" class="'+(ovTab==='hist'?'on':'')+'">对话记录</button>'
+      +'<button data-tab="save" class="'+(ovTab==='save'?'on':'')+'">存档</button>'
+      +'<button data-tab="load" class="'+(ovTab==='load'?'on':'')+'">读档</button>'
+      +'<button data-tab="endings" class="'+(ovTab==='endings'?'on':'')+'">结局一览</button>'
+      +'<button data-tab="cfg" class="'+(ovTab==='cfg'?'on':'')+'">设置</button>'
+      +'</div>';
+    let body='';
+    if(ovTab==='hist'){
+      const h=g.hist.slice(-80);
+      body = h.length? h.map(function(x){
+        const cls = x.kind==='narr'?'narr':(x.kind==='inner'?'inner':'');
+        const who = x.name? '<span class="who">'+esc(x.name)+'</span>':'';
+        return '<div class="logline '+cls+'">'+who+esc(x.text)+'</div>';
+      }).join('') : '<div class="ovsub">还没有对话记录。</div>';
+    }else if(ovTab==='save'||ovTab==='load'){
+      body='';
+      for(let s=1;s<=3;s++){
+        const d=slotMeta(s);
+        const meta = d? ('第 '+(d.pc+1)+' 条 · 心动 '+d.aff+' · '+(d.chapter||'')) : '空存档位';
+        const time = d? ('　'+new Date(d.t).toLocaleString()) : '';
+        body+='<div class="slot"><div class="sname">存档 '+s+'</div><div class="smeta">'+esc(meta)+esc(time)+'</div>'
+          +(ovTab==='save'
+            ? '<button data-save="'+s+'">保存</button>'
+            : '<button data-load="'+s+'" '+(d?'':'disabled')+'>读取</button>')
+          +'</div>';
+      }
+      if(g.started) body+='<div class="ovsub">提示：存档记录的是「当前正在播放的这一句」，读档后会从这一句重新播放。</div>';
+    }else if(ovTab==='endings'){
+      const pr=progress();
+      const list=[['true',ENDINGS.true],['warm',ENDINGS.warm]];
+      body = list.map(function(it){
+        const got = pr.unlocked.indexOf(it[0])>=0;
+        return '<div class="slot '+(got?'':'locked')+'"><div class="sname">'+(got?'已解锁':'？？？')+'</div>'
+          +'<div class="smeta"><b style="color:#e8e2ff">'+it[1].title+'</b><br>'+it[1].sub+'</div></div>';
+      }).join('')
+      +'<div class="slot '+(pr.bonus?'':'locked')+'"><div class="sname">'+(pr.bonus?'已解锁':'？？？')+'</div>'
+      +'<div class="smeta"><b style="color:#e8e2ff">彩蛋 · 一个文件夹</b><br>心动值 ≥ 16 时，在尾声之后出现。</div></div>'
+      +'<div class="ovsub">历史最高心动值：'+(pr.best||0)+' / '+MAXAFF+'</div>';
+    }else{
+      body='<div class="ovrow"><button data-speed="26" class="'+(cfg.speed<=30?'on':'')+'">文字·快</button>'
+        +'<button data-speed="48" class="'+(cfg.speed>30&&cfg.speed<=65?'on':'')+'">文字·中</button>'
+        +'<button data-speed="85" class="'+(cfg.speed>65?'on':'')+'">文字·慢</button></div>'
+        +'<div class="ovrow"><button data-sfx="1" class="'+(cfg.sfx?'on':'')+'">音效 开</button>'
+        +'<button data-sfx="0" class="'+(cfg.sfx?'':'on')+'">音效 关</button></div>'
+        +'<div class="ovsub">操作：点击画面 / 空格 / 回车 推进；自动与快进在右上角。</div>';
+    }
+    p.innerHTML='<h2>'+(ovTab==='hist'?'对话记录':ovTab==='save'?'存档':ovTab==='load'?'读档':ovTab==='endings'?'结局一览':'设置')+'</h2>'+tabs+body;
+    p.scrollTop = ovTab==='hist' ? p.scrollHeight : 0;
+  }
+  function esc(s){ return String(s).replace(/[&<>]/g,function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;'})[c]; }); }
+
+  /* ---------- 开始 / 返回标题 ---------- */
+  function startGame(fromSave){
+    g.pc=0; g.aff=0; g.flags={}; g.hist=[]; g.pos={left:null,mid:null,right:null};
+    g.curBg=null; g.choice=false; g.lock=false; g.auto=false; g.skip=false; g.started=true;
+    g.ending=null; g.speaker=null;
+    g.chatOpen=false; g.chatWho=null; g.chatLog=[]; g.tipRow=null;
+    closeChat(); closeCard();
+    setAff(0);
+    document.querySelectorAll('#btns button').forEach(function(b){ b.classList.remove('active'); });
+    $('#title').classList.add('hidden');
+    closeOverlay();
+    $('#dlg').classList.add('hidden');
+    $('#choices').classList.add('hidden');
+    setChapter('序章');
+    setTimeout(function(){ step(); },340);
+  }
+  function goTitle(){
+    g.started=false; g.auto=false; g.skip=false;
+    clearInterval(g.typeT); clearTimeout(autoT);
+    closeChat(); closeCard();
+    $('#title').classList.remove('hidden');
+    closeOverlay();
+    $('#dlg').classList.add('hidden');
+    $('#choices').classList.add('hidden');
+    $('#affNum').textContent='0'; $('#affBar>i').style.width='0%';
+    renderSprites();
+  }
+
+  /* ---------- 事件 ---------- */
+  document.addEventListener('click', function(ev){
+    const t=ev.target;
+    if(t.closest('#hud')||t.closest('#overlay')||t.closest('#title')||t.closest('#choices')) return;
+    advance();
+  });
+  document.addEventListener('keydown', function(ev){
+    if(ev.code==='Space'||ev.code==='Enter'||ev.code==='NumpadEnter'){
+      if(!$('#overlay').classList.contains('hidden')){ closeOverlay(); return; }
+      ev.preventDefault(); advance();
+    }
+    if(ev.code==='Escape'){
+      if(!$('#overlay').classList.contains('hidden')) closeOverlay(); else openOverlay('cfg');
+    }
+    if(ev.key==='a'||ev.key==='A') toggleAuto();
+    if(ev.key==='s'||ev.key==='S') toggleSkip();
+    if(ev.key==='h'||ev.key==='H') openOverlay('hist');
+  });
+
+  function toggleAuto(){
+    g.auto=!g.auto;
+    document.querySelector('#btns button[data-act="auto"]').classList.toggle('active',g.auto);
+    if(g.auto && !g.typing && !g.choice) advance(); else afterTyping();
+  }
+  function toggleSkip(){
+    g.skip=!g.skip;
+    document.querySelector('#btns button[data-act="skip"]').classList.toggle('active',g.skip);
+    if(g.skip){ if(g.typing) finishTyping(); else advance(); }
+  }
+
+  $('#btns').addEventListener('click', function(ev){
+    const b=ev.target.closest('button'); if(!b) return;
+    const a=b.dataset.act;
+    if(a==='auto') toggleAuto();
+    else if(a==='skip') toggleSkip();
+    else if(a==='hist') openOverlay('hist');
+    else if(a==='save') openOverlay('save');
+    else if(a==='load') openOverlay('load');
+    else if(a==='cfg') openOverlay('cfg');
+    else if(a==='home') goTitle();
+  });
+  $('#menu').addEventListener('click', function(ev){
+    const b=ev.target.closest('button'); if(!b) return;
+    const a=b.dataset.go;
+    if(a==='start'){
+      if(g.started) goTitle();
+      startGame();
+    }
+    else if(a==='continue'){ const s=lastSlot(); if(s) doLoad(s); else toast('还没有任何存档'); }
+    else if(a==='endings') openOverlay('endings');
+    else if(a==='cfg') openOverlay('cfg');
+  });
+  $('#ovClose').addEventListener('click', closeOverlay);
+  $('#ovPanel').addEventListener('click', function(ev){
+    const b=ev.target.closest('button'); if(!b) return;
+    if(b.dataset.tab){ ovTab=b.dataset.tab; render(); return; }
+    if(b.dataset.save){ doSave(+b.dataset.save); return; }
+    if(b.dataset.load){ doLoad(+b.dataset.load); return; }
+    if(b.dataset.speed){ cfg.speed=+b.dataset.speed; saveCfg(); render(); return; }
+    if(b.dataset.sfx){ cfg.sfx=+b.dataset.sfx===1; saveCfg(); render(); return; }
+    const a=b.dataset.act;
+    if(a==='endings'){ ovTab='endings'; render(); }
+    else if(a==='home'){ $('#overlay').classList.add('hidden'); goTitle(); }
+    else if(a==='retry'){ $('#overlay').classList.add('hidden'); goTitle(); startGame(); }
+  });
+
+  /* ---------- 启动 ---------- */
+  g.curBg='classroom';
+  $('#bg').className='bg s-classroom on';
+  setFX(null);
+  const pr=progress();
+  if(pr.unlocked.length){
+    const btn=document.querySelector('#menu button[data-go="endings"]');
+    btn.textContent='结局一览（'+pr.unlocked.length+'/2）';
+  }
+  if(!lastSlot()){
+    const btn=document.querySelector('#menu button[data-go="continue"]');
+    btn.classList.add('locked'); btn.style.opacity='.45';
+  }
+  /* ---------- 调试 / 自查接口（也方便做章节直达与自动化测试） ---------- */
+  window.__GAME__ = {
+    STORY:STORY, LABELS:LABELS, g:g, ENDINGS:ENDINGS,
+    dev:{
+      step:step, jump:jump, setBG:setBG, setFX:setFX, show:show, hide:hide, advance:advance,
+      expr:expr, setAff:setAff, renderSprites:renderSprites,
+      save:doSave, load:doLoad, openOverlay:openOverlay, closeOverlay:closeOverlay,
+      go:function(target,opts){
+        opts=opts||{};
+        if(!opts.keep){
+          g.pc=0; g.aff=0; g.flags={}; g.hist=[]; g.pos={left:null,mid:null,right:null};
+          g.curBg=null; g.ending=null; setAff(opts.aff||0);
+          g.chatOpen=false; g.chatWho=null; g.chatLog=[]; g.tipRow=null; closeChat(); closeCard();
+        }
+        g.started=true; g.choice=false; g.lock=false; g.typing=false; g.auto=false; g.skip=false;
+        $('#title').classList.add('hidden'); $('#dlg').classList.add('hidden');
+        $('#choices').classList.add('hidden'); $('#chap').classList.remove('on');
+        g.noCard=!!opts.noCard;
+        if(typeof target==='number') g.pc=target; else jump(target);
+        step();
+      }
+    }
+  };
+})();
+</script>
+</body>
+</html>

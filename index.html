@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OI 题材视觉小说 · 两款</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(120% 90% at 50% 0%,#1b2136 0%,#10131f 45%,#080910 100%);
+    color:#e6e4f2;font-family:"PingFang SC","Microsoft YaHei",system-ui,-apple-system,sans-serif;
+    min-height:100vh;padding:48px 20px 72px}
+  .wrap{max-width:1080px;margin:0 auto}
+  .kicker{font-size:12.5px;letter-spacing:.34em;color:#8f9bd6;text-transform:uppercase;text-align:center}
+  h1{margin:14px 0 6px;text-align:center;font-size:clamp(26px,4.2vw,40px);letter-spacing:.06em;
+    background:linear-gradient(100deg,#cdd6ff,#9d8cff 55%,#7ee7d0);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{margin:0 auto;max-width:640px;text-align:center;color:#a9a6c4;font-size:14.5px;line-height:1.9}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;margin-top:40px}
+  .card{display:flex;flex-direction:column;background:linear-gradient(180deg,rgba(28,26,46,.92),rgba(14,14,24,.96));
+    border:1px solid rgba(150,170,255,.22);border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;
+    transition:.28s cubic-bezier(.22,.9,.28,1)}
+  .card:hover{transform:translateY(-4px);border-color:rgba(180,160,255,.55);box-shadow:0 20px 46px rgba(0,0,0,.55)}
+  .shot{aspect-ratio:16/9;background:#0b0c14;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.07)}
+  .shot img{width:100%;height:100%;object-fit:cover;display:block}
+  .body{padding:16px 18px 20px}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:6px;margin-bottom:9px}
+  .tag.lzy{background:rgba(143,191,212,.16);color:#a9d8ea}
+  .tag.mzt{background:rgba(185,140,255,.16);color:#cdb2ff}
+  h2{margin:0 0 8px;font-size:19.5px;letter-spacing:.02em}
+  p{margin:0;color:#a9a6c4;font-size:13.6px;line-height:1.9}
+  .meta{margin-top:12px;font-size:12px;color:#7d7a99}
+  .go{margin-top:14px;font-size:13.5px;color:#c9c2ff}
+  footer{margin-top:46px;text-align:center;color:#6c6a86;font-size:12.5px;line-height:2}
+  footer code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:5px;color:#b9b3d8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="kicker">OI · Visual Novel</div>
+  <h1>两款 OI 题材视觉小说</h1>
+  <p class="lead">同一个 XTBT，两条不同的线。都是单文件网页游戏：点击或空格推进，有选项、心动值、存档、结局与彩蛋。</p>
+
+  <div class="cards">
+    <a class="card" href="lzy/">
+      <div class="shot"><img src="lzy/preview/01-标题界面.png" alt="机房里的 26 度"></div>
+      <div class="body">
+        <span class="tag lzy">XTBT × lzy</span>
+        <h2>机房里的 26 度</h2>
+        <p>初二那个暑假，机房装修，全队搬进高中部五层一间空教室。他因为一个外号被人起哄，她坐在第二排，一边骂他的代码一边看他的提交记录。一场停电、一次滚榜、一个叫「原神牛逼」的队名。</p>
+        <div class="meta">序章 + 7 章 · 11 组选项 · 双结局 · 彩蛋</div>
+        <div class="go">进入游戏 →</div>
+      </div>
+    </a>
+
+    <a class="card" href="mzt/">
+      <div class="shot"><img src="mzt/preview/01-洛谷主页卡.png" alt="大麦子"></div>
+      <div class="body">
+        <span class="tag mzt">XTBT × mzt</span>
+        <h2>大麦子</h2>
+        <p>初一暑假住校集训。楼上三层那个场切黑题的人满口「包子」，自称你爸爸我；楼下二层只有一个初二学生，接得住他所有的话。榜单上他们永远差一两分，三年没有例外。</p>
+        <div class="meta">序章 + 12 章 · 12 组选项 · 双结局 · 彩蛋</div>
+        <div class="go">进入游戏 →</div>
+      </div>
+    </a>
+  </div>
+
+  <footer>
+    纯静态单文件网页游戏，无任何依赖与外部资源。<br>
+    手机浏览器也能玩；进度存在浏览器本地（<code>localStorage</code>），换设备不会同步。<br>
+    人物与情节均为虚构，与现实中的任何账号或真实人物无关。
+  </footer>
+</div>
+</body>
+</html>
